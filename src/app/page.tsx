@@ -1,8 +1,9 @@
-import Navbar from "@/components/navbar/navbar";
+"use client";
+
 import React from "react";
 
 const Home = () => {
-  return <Navbar />;
+  return <div className="h-[100vh]"> </div>;
 };
 
 export default Home;

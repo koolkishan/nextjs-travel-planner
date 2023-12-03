@@ -7,7 +7,6 @@ import {
   Link,
   Button,
 } from "@nextui-org/react";
-// import { AcmeLogo } from "./AcmeLogo.jsx";
 
 const Navbar = () => {
   return (

@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id Int @default(autoincrement()) @id
+  username String
+  email String @unique
+  password String
+  createdAt DateTime @default(now())
+}
+
+model Jobs {
+  id Int @default(autoincrement()) @id
+  url String
+  isComplete Boolean @default(false)
+  status String @default("active")
+  jobType Json
+  createdAt DateTime @default(now())
+}
+
+
+model Trips {
+  id String @id @unique
+  name String
+  nights Int
+  days Int
+  destinationItinerary Json
+  images Json
+  inclusions Json
+  themes Json
+  price Int
+  destinationDetails Json
+  detailedIntineary Json
+  description String
+  packageIteniary Json
+  scrapedOn DateTime @default(now())
+}
