@@ -42,17 +42,17 @@ const Navbar = ({ onOpen }) => {
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
-          <Link color="foreground" href="#">
+          <Link color="foreground" href="/search-flights">
             Flights
           </Link>
         </NavbarItem>
         <NavbarItem isActive>
-          <Link href="#" aria-current="page">
+          <Link href="/search-hotels" aria-current="page">
             Hotels
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="#">
+          <Link color="foreground" href="/search-tours">
             Tours
           </Link>
         </NavbarItem>
@@ -83,10 +83,9 @@ const Navbar = ({ onOpen }) => {
                   isBordered
                   as="button"
                   className="transition-transform"
-                  color="secondary"
-                  name="Jason Hughes"
-                  size="sm"
-                  src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                  color="priamry"
+                  name={userInfo.firstName}
+                  size="md"
                 />
               </DropdownTrigger>
               <DropdownMenu

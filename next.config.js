@@ -6,7 +6,13 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_API_HOST: "http://localhost:3000/api",
   },
-  images: {},
+  images: {
+    remotePatterns: [
+      {
+        hostname: "imgcld.yatra.com",
+      },
+    ],
+  },
 };
 
 module.exports = nextConfig;
