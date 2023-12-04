@@ -37,44 +37,12 @@ const Sidebar = () => {
     {
       label: "Trips",
       icon: <BiSolidCategory />,
-      subMenuItems: [
-        {
-          label: "Add Category",
-          icon: <MdAddBox />,
-          link: "/admin/category/add-category",
-        },
-        {
-          label: "All Category",
-          icon: <HiCollection />,
-          link: "/admin/category/all-category",
-        },
-        {
-          label: "Reports",
-          icon: <BsFillBarChartFill />,
-          link: "/admin/category/reports",
-        },
-      ],
+      link: "/admin/trips",
     },
     {
       label: "Hotels",
       icon: <FaHotel />,
-      subMenuItems: [
-        {
-          label: "Add Product",
-          icon: <MdAddBox />,
-          link: "/admin/products/add-product",
-        },
-        {
-          label: "All Products",
-          icon: <HiCollection />,
-          link: "/admin/products/all-products",
-        },
-        {
-          label: "Reports",
-          icon: <BsFillBarChartFill />,
-          link: "/admin/products/reports",
-        },
-      ],
+      link: "/admin/hotels",
     },
     { label: "Bookings", icon: <FaBookOpen />, link: "/admin/orders" },
     {
