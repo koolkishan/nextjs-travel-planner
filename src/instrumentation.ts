@@ -1,6 +1,7 @@
 import { startLocationScraping } from "./scraping/locationScraping";
 import prisma from "./lib/prisma";
 import { startPackageScraping } from "./scraping/packageScraping";
+import { startFlightScraping } from "./scraping/flightsScraping";
 
 const SBR_WS_ENDPOINT =
   "wss://brd-customer-hl_6d21b639-zone-scraping_browser-country-in:yrt06nzjj8m1@brd.superproxy.io:9222";
@@ -20,6 +21,7 @@ export const register = async () => {
         const browser = await puppeteer.connect({
           browserWSEndpoint: SBR_WS_ENDPOINT,
         });
+
         // const browser = await puppeteer.launch({
         //   executablePath:
         //     "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
@@ -70,6 +72,13 @@ export const register = async () => {
                 data: { isComplete: true, status: "complete" },
               });
             }
+          } else if (job.data.jobType.type === "flight") {
+            console.log("in flight scraping");
+            console.log("Connected! Navigating to " + job.data.url);
+            await page.goto(job.data.url);
+            console.log("Navigated! Scraping page content...");
+            const flights = await startFlightScraping(page);
+            console.log({ flights });
           }
         } catch (error) {
           console.log({ error });

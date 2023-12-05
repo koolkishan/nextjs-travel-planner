@@ -54,3 +54,17 @@ model Trips {
   packageIteniary Json
   scrapedOn DateTime @default(now())
 }
+
+model Flights {
+  id String @id @unique
+  name String
+  logo String
+  from String
+  to String
+  departureTime String
+  arrivalTime String
+  travelClass String
+  duration String
+  scrappedOn DateTime @default(now())
+  price Int
+}

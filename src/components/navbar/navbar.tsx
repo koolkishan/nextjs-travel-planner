@@ -46,13 +46,13 @@ const Navbar = ({ onOpen }) => {
             Flights
           </Link>
         </NavbarItem>
-        <NavbarItem isActive>
-          <Link href="/search-hotels" aria-current="page">
+        <NavbarItem>
+          <Link href="/search-hotels" color="foreground">
             Hotels
           </Link>
         </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="/search-tours">
+        <NavbarItem isActive>
+          <Link color="" href="/search-tours" aria-current="page">
             Tours
           </Link>
         </NavbarItem>

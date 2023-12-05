@@ -108,18 +108,22 @@ const ScrapeTrips = () => {
             <Tab key="url" title="URL">
               <Card>
                 <CardBody>
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-                  irure dolor in reprehenderit in voluptate velit esse cillum
-                  dolore eu fugiat nulla pariatur.
+                  <Input
+                    type="text"
+                    label="Scrape data for a specific URL"
+                    // onChange={(e) => searchCities(e.target.value)}
+                  />
                 </CardBody>
               </Card>
             </Tab>
             <Tab key="id" title="ID">
               <Card>
                 <CardBody>
-                  Excepteur sint occaecat cupidatat non proident, sunt in culpa
-                  qui officia deserunt mollit anim id est laborum.
+                  <Input
+                    type="text"
+                    label="Search data for a specific trip package using package ID.  "
+                    // onChange={(e) => searchCities(e.target.value)}
+                  />
                 </CardBody>
               </Card>
             </Tab>
