@@ -4,6 +4,7 @@ import "./globals.css";
 
 import { Providers } from "./providers";
 import AppProtector from "./app-protector";
+import PageLayout from "./PageLayout";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,8 +22,8 @@ export default function RootLayout({
     <html lang="en" className="light">
       <body className={inter.className}>
         <Providers>
+          <PageLayout children={children} />
           <AppProtector />
-          {children}
         </Providers>
       </body>
     </html>

@@ -28,7 +28,7 @@ const Navbar = ({ onOpen }) => {
   const router = useRouter();
   const { userInfo } = useAppStore();
   return (
-    <NextNavbar isBordered>
+    <NextNavbar isBordered className=" min-h-[10vh]">
       <NavbarBrand>
         <div
           className="cursor-pointer flex items-center"
@@ -41,6 +41,11 @@ const Navbar = ({ onOpen }) => {
         </div>
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
+        <NavbarItem isActive>
+          <Link href="/" aria-current="page">
+            Tours
+          </Link>
+        </NavbarItem>
         <NavbarItem>
           <Link color="foreground" href="/search-flights">
             Flights
@@ -51,22 +56,17 @@ const Navbar = ({ onOpen }) => {
             Hotels
           </Link>
         </NavbarItem>
-        <NavbarItem isActive>
-          <Link color="" href="/search-tours" aria-current="page">
-            Tours
-          </Link>
-        </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
         {!userInfo && (
           <>
             <NavbarItem className="hidden lg:flex">
-              <Link href="/login">Login</Link>
+              <Button onPress={onOpen}>Login</Button>
             </NavbarItem>
             <NavbarItem>
               <Button
                 as={Button}
-                color="primary"
+                color="danger"
                 onPress={onOpen}
                 variant="flat"
               >

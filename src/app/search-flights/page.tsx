@@ -1,10 +1,14 @@
 "use client";
+import ScrapingLoader from "@/components/loaders/scraping-loader";
 import { apiClient } from "@/lib";
+import { useAppStore } from "@/store";
 import { USER_API_ROUTES } from "@/utils";
+import { Input } from "@nextui-org/react";
 import axios from "axios";
 import React, { useEffect } from "react";
 
 const SearchFlights = () => {
+  const { setScrapingType, setScraping } = useAppStore();
   const flightData = [
     {
       id: "Boeing 787",
@@ -30,10 +34,27 @@ const SearchFlights = () => {
     getFlightsData();
   }, []);
 
+  const startScraping = () => {
+    setScraping(true);
+    setScrapingType("hotel");
+  };
+
   return (
     <div>
       {flightData.map((data) => {
-        return <div key={data.id}></div>;
+        return (
+          <div
+            key={data.id}
+            className="flex items-center justify-center h-[60vh]"
+          >
+            <button onClick={startScraping}>Start Scraping</button>
+            <div className="flex items-center justify-center h-[40vh] px-10 bg-orange-500 w-[50vw] gap-5">
+              <Input type="text" placeholder="From" />
+              <Input type="text" placeholder="To" />
+              <Input type="date" placeholder="Date" />
+            </div>
+          </div>
+        );
       })}
     </div>
   );
