@@ -8,4 +8,5 @@ export const USER_API_ROUTES = {
   HOTELS_SCRAPE: "/hotels/scrape",
   HOTELS_SCRAPE_STATUS: "/hotels/scrape-status",
   GET_ALL_TRIPS: "/all-trips",
+  GET_ALL_HOTELS: "/all-hotels",
 };
