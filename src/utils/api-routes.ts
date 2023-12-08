@@ -4,9 +4,8 @@ export const USER_API_ROUTES = {
   ME: "/auth/me",
   TRIPDATA: "/trips",
   FLIGHT_SCRAPE: "/flights/scrape",
+  FLIGHT_SCRAPE_STATUS: "/flights/scrape-status",
+  HOTELS_SCRAPE: "/hotels/scrape",
+  HOTELS_SCRAPE_STATUS: "/hotels/scrape-status",
   GET_ALL_TRIPS: "/all-trips",
 };
-
-// export const ADMIN_API_ROUTES = {
-//   TRIPS: "/"
-// }

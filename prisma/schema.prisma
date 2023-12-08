@@ -56,15 +56,25 @@ model Trips {
 }
 
 model Flights {
-  id String @id @unique
+  id Int @default(autoincrement()) @id
   name String
   logo String
   from String
   to String
   departureTime String
   arrivalTime String
-  travelClass String
   duration String
   scrappedOn DateTime @default(now())
   price Int
+  jobId Int
+}
+
+model Hotels {
+  id Int @default(autoincrement()) @id
+  name String
+  image String
+  price Int
+  jobId Int
+  location String
+  scrappedOn DateTime @default(now())
 }

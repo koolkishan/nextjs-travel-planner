@@ -2,6 +2,7 @@ import { startLocationScraping } from "./scraping/locationScraping";
 import prisma from "./lib/prisma";
 import { startPackageScraping } from "./scraping/packageScraping";
 import { startFlightScraping } from "./scraping/flightsScraping";
+import { startHotelScraping } from "./scraping/hotelScraping";
 
 const SBR_WS_ENDPOINT =
   "wss://brd-customer-hl_6d21b639-zone-scraping_browser-country-in:yrt06nzjj8m1@brd.superproxy.io:9222";
@@ -21,7 +22,7 @@ export const register = async () => {
         const browser = await puppeteer.connect({
           browserWSEndpoint: SBR_WS_ENDPOINT,
         });
-
+        console.log(job.data);
         // const browser = await puppeteer.launch({
         //   executablePath:
         //     "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
@@ -78,7 +79,53 @@ export const register = async () => {
             await page.goto(job.data.url);
             console.log("Navigated! Scraping page content...");
             const flights = await startFlightScraping(page);
-            console.log({ flights });
+
+            await prisma.jobs.update({
+              where: { id: job.data.id },
+              data: { isComplete: true, status: "complete" },
+            });
+
+            for (const flight of flights) {
+              await prisma.flights.create({
+                data: {
+                  name: flight.airlineName,
+                  logo: flight.airlineLogo,
+                  from: job.data.jobType.source,
+                  to: job.data.jobType.destination,
+                  departureTime: flight.departureTime,
+                  arrivalTime: flight.arrivalTime,
+                  duration: flight.flightDuration,
+                  price: flight.price,
+                  jobId: job.data.id,
+                },
+              });
+            }
+          } else if (job.data.jobType.type === "hotels") {
+            console.log("Connected! Navigating to " + job.data.url);
+            await page.goto(job.data.url);
+            console.log("Navigated! Scraping page content...");
+            const hotels = await startHotelScraping(
+              page,
+              browser,
+              job.data.location
+            );
+
+            await prisma.jobs.update({
+              where: { id: job.data.id },
+              data: { isComplete: true, status: "complete" },
+            });
+
+            for (const hotel of hotels) {
+              await prisma.hotels.create({
+                data: {
+                  name: hotel.title,
+                  image: hotel.photo,
+                  price: hotel.price,
+                  jobId: job.data.id,
+                  location: job.data.location,
+                },
+              });
+            }
           }
         } catch (error) {
           console.log({ error });

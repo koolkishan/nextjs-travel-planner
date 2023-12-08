@@ -1,62 +1,61 @@
-export const startFlightScraping = async (page) => {
-  return await page.evaluate(() => {
-    const flightData = [];
+interface Flight {
+  airlineLogo: string;
+  departureTime: string;
+  arrivalTime: string;
+  flightDuration: string;
+  airlineName: string;
+  price: number;
+}
 
-    // Find all main containers
-    const mainContainers = document.querySelectorAll(".nrc6-content-section");
+export const startFlightScraping = async (page: any): Promise<Flight[]> => {
+  return await page.evaluate(async (): Promise<Flight[]> => {
+    await new Promise((resolve) => setTimeout(resolve, 5000));
 
-    // Iterate through each main container
-    mainContainers.forEach((mainContainer) => {
-      // Find the list of flights within each main container
-      const flightsList = mainContainer.querySelector(".hJSA-list");
+    const flights: Flight[] = [];
 
-      if (flightsList) {
-        // Iterate through each flight
-        flightsList.querySelectorAll(".hJSA-item").forEach((flightItem) => {
-          // Extract relevant information
-          const airlineLogo = flightItem
-            .querySelector("img[alt]")
-            .getAttribute("src");
-          const departureTime = flightItem
-            .querySelector(".vmXl-mod-variant-large")
-            .textContent.trim();
-          const duration = flightItem
-            .querySelector(".vmXl-mod-variant-default")
-            .textContent.trim();
-          const stops = flightItem
-            .querySelector(".JWEO-stops-text")
-            .textContent.trim();
-          const departureAirport = flightItem
-            .querySelectorAll(".EFvI-ap-info span")[0]
-            .textContent.trim();
-          const arrivalAirport = flightItem
-            .querySelectorAll(".EFvI-ap-info span")[1]
-            .textContent.trim();
-          const airlineName = flightItem
-            .querySelector(".c_cgF")
-            .textContent.trim();
-          const price = flightItem
-            .querySelector(".your-price-class")
-            .textContent.trim(); // Adjust this selector accordingly
+    const flightSelectors = document.querySelectorAll(".nrc6-wrapper");
 
-          // Store the data in an object
-          const flightInfo = {
-            airlineLogo,
-            departureTime,
-            duration,
-            stops,
-            departureAirport,
-            arrivalAirport,
-            airlineName,
-            price,
-          };
+    flightSelectors.forEach((flightElement) => {
+      const airlineLogo = flightElement.querySelector("img")?.src || "";
+      const [rawDepartureTime, rawArrivalTime] = (
+        flightElement.querySelector(".vmXl")?.innerText || ""
+      ).split(" – ");
 
-          // Append the flight information to the array
-          flightData.push(flightInfo);
-        });
-      }
+      // Function to extract time and remove numeric values at the end
+      const extractTime = (rawTime: string): string => {
+        const timeWithoutNumbers = rawTime.replace(/[0-9+\s]+$/, "").trim();
+        return timeWithoutNumbers;
+      };
+
+      const departureTime = extractTime(rawDepartureTime);
+      const arrivalTime = extractTime(rawArrivalTime);
+      const flightDuration = (
+        flightElement.querySelector(".xdW8")?.children[0]?.innerText || ""
+      ).trim();
+      console.log({ flightDuration });
+
+      const airlineName = (
+        flightElement.querySelector(".VY2U")?.children[1]?.innerText || ""
+      ).trim();
+
+      // Extract price
+      const price = parseInt(
+        (flightElement.querySelector(".f8F1-price-text")?.innerText || "")
+          .replace(/[^\d]/g, "")
+          .trim(),
+        10
+      );
+
+      flights.push({
+        airlineLogo,
+        departureTime,
+        arrivalTime,
+        flightDuration,
+        airlineName,
+        price,
+      });
     });
 
-    return flightData;
+    return flights;
   });
 };
