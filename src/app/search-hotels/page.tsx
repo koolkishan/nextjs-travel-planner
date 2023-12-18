@@ -6,6 +6,7 @@ import { USER_API_ROUTES } from "@/utils";
 import { cityAirportCode } from "@/utils/city-airport-codes";
 import { Input, Listbox, ListboxItem } from "@nextui-org/react";
 import axios from "axios";
+import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 
@@ -76,33 +77,39 @@ const SearchHotels = () => {
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-center h-[60vh]">
-        <div className="grid grid-cols-3 items-center justify-center h-[40vh] px-10  w-[50vw] gap-5">
-          <Input
-            type="text"
-            label="Search for a Location"
-            onChange={(e) => searchCities(e.target.value)}
-          />
+    <div className="h-[100vh] flex items-center justify-center">
+      <div className="absolute left-0 top-0 h-[100vh] w-[100vw] max-w-[100vw] overflow-hidden overflow-x-hidden">
+        <Image src="/hotel-search.png" fill alt="Search" />
+      </div>
+      <div className="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm"></div>
+      <div className="absolute h-[50vh] w-[60vw] flex flex-col gap-5">
+        <div className="flex items-center justify-center h-[60vh]">
+          <div className="grid grid-cols-3 items-center justify-center h-[40vh] px-10  w-[50vw] gap-5">
+            <Input
+              type="text"
+              label="Search for a Location"
+              onChange={(e) => searchCities(e.target.value)}
+            />
 
-          <div className="w-full min-h-[200px] max-w-[260px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100 mt-5">
-            <Listbox
-              aria-label="Actions"
-              onAction={(key) => setSelectedCity(key as string)}
-            >
-              {cities.map((city) => (
-                <ListboxItem
-                  key={city}
-                  color="primary"
-                  className="text-primary-500"
-                >
-                  {city}
-                </ListboxItem>
-              ))}
-            </Listbox>
+            <div className="w-full min-h-[200px] max-w-[260px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100 mt-5">
+              <Listbox
+                aria-label="Actions"
+                onAction={(key) => setSelectedCity(key as string)}
+              >
+                {cities.map((city) => (
+                  <ListboxItem
+                    key={city}
+                    color="primary"
+                    className="text-primary-500"
+                  >
+                    {city}
+                  </ListboxItem>
+                ))}
+              </Listbox>
+            </div>
+
+            <button onClick={startScraping}>Search Hotels</button>
           </div>
-
-          <button onClick={startScraping}>Search Hotels</button>
         </div>
       </div>
     </div>

@@ -68,7 +68,12 @@ const AuthModal = ({ isOpen, onOpen, onOpenChange }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur">
+    <Modal
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      backdrop="blur"
+      className=" bg-opacity-50 bg-purple-200"
+    >
       <ModalContent>
         {(onClose) => (
           <>

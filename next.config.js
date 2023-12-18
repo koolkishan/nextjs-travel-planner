@@ -11,6 +11,9 @@ const nextConfig = {
       {
         hostname: "imgcld.yatra.com",
       },
+      {
+        hostname: "content.r9cdn.net",
+      },
     ],
   },
 };

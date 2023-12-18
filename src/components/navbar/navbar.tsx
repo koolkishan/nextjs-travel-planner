@@ -15,7 +15,7 @@ import {
 } from "@nextui-org/react";
 import { Architects_Daughter } from "next/font/google";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAppStore } from "@/store";
 
 const ArchitectsDaughter = Architects_Daughter({
@@ -26,9 +26,13 @@ const ArchitectsDaughter = Architects_Daughter({
 
 const Navbar = ({ onOpen }) => {
   const router = useRouter();
+  const pathname = usePathname();
   const { userInfo } = useAppStore();
   return (
-    <NextNavbar isBordered className=" min-h-[10vh]">
+    <NextNavbar
+      isBordered
+      className=" min-h-[10vh] bg-violet-500 bg-opacity-10 text-white"
+    >
       <NavbarBrand>
         <div
           className="cursor-pointer flex items-center"
@@ -42,17 +46,31 @@ const Navbar = ({ onOpen }) => {
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem isActive>
-          <Link href="/" aria-current="page">
+          <Link
+            href="/"
+            aria-current="page"
+            className={`${pathname === "/" ? "text-danger-500" : "text-white"}`}
+          >
             Tours
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="/search-flights">
+          <Link
+            href="/search-flights"
+            className={`${
+              pathname.includes("flights") ? "text-danger-500" : "text-white"
+            }`}
+          >
             Flights
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link href="/search-hotels" color="foreground">
+          <Link
+            href="/search-hotels"
+            className={`${
+              pathname.includes("hotels") ? "text-danger-500" : "text-white"
+            }`}
+          >
             Hotels
           </Link>
         </NavbarItem>
@@ -61,7 +79,14 @@ const Navbar = ({ onOpen }) => {
         {!userInfo && (
           <>
             <NavbarItem className="hidden lg:flex">
-              <Button onPress={onOpen}>Login</Button>
+              <Button
+                onPress={onOpen}
+                color="secondary"
+                variant="flat"
+                className="text-purple-500"
+              >
+                Login
+              </Button>
             </NavbarItem>
             <NavbarItem>
               <Button
