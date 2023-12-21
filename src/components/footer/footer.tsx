@@ -5,7 +5,16 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import { Input, Button } from "@nextui-org/react";
-import { FaChevronRight, FaTelegram } from "react-icons/fa";
+import {
+  FaChevronRight,
+  FaFacebook,
+  FaFacebookF,
+  FaInstagram,
+  FaLinkedin,
+  FaLinkedinIn,
+  FaTelegram,
+  FaTwitter,
+} from "react-icons/fa";
 
 const ArchitectsDaughter = Architects_Daughter({
   weight: "400",
@@ -58,22 +67,21 @@ const Footer = () => {
         </div>
         <div className="flex flex-col gap-3 pt-10">
           <h3 className="text-3xl font-medium text-danger-500">Get in Touch</h3>
-          <div className="flex  gap-5 mt-10">
-            <Input
-              type="email"
-              size="sm"
-              color="secondary"
-              variant="bordered"
-              className=""
-            />
-            <Button
-              color="secondary"
-              variant="flat"
-              className="text-purple-500 h-full"
-            >
-              <FaChevronRight />
-            </Button>
-          </div>
+
+          <ul className="flex  gap-5 mt-5">
+            <li className="bg-purple-500 bg-opacity-30 rounded-lg text-purple-500 text-3xl p-3 cursor-pointer hover:bg-opacity-50 transition-all duration-300">
+              <FaFacebookF />
+            </li>
+            <li className="bg-purple-500 bg-opacity-30 rounded-lg text-purple-500 text-3xl p-3 cursor-pointer hover:bg-opacity-50 transition-all duration-300">
+              <FaInstagram />
+            </li>
+            <li className="bg-purple-500 bg-opacity-30 rounded-lg text-purple-500 text-3xl p-3 cursor-pointer hover:bg-opacity-50 transition-all duration-300">
+              <FaLinkedinIn />
+            </li>
+            <li className="bg-purple-500 bg-opacity-30 rounded-lg text-purple-500 text-3xl p-3 cursor-pointer hover:bg-opacity-50 transition-all duration-300">
+              <FaTwitter />
+            </li>
+          </ul>
         </div>
       </div>
     </footer>

@@ -4,7 +4,7 @@ import { apiClient } from "@/lib";
 import { useAppStore } from "@/store";
 import { USER_API_ROUTES } from "@/utils";
 import { cityAirportCode } from "@/utils/city-airport-codes";
-import { Input, Listbox, ListboxItem } from "@nextui-org/react";
+import { Button, Input, Listbox, ListboxItem } from "@nextui-org/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
@@ -109,7 +109,7 @@ const SearchFlights = () => {
   };
 
   return (
-    <div className="h-[100vh] flex items-center justify-center">
+    <div className="h-[90vh] flex items-center justify-center">
       <div className="absolute left-0 top-0 h-[100vh] w-[100vw] max-w-[100vw] overflow-hidden overflow-x-hidden">
         <Image src="/flight-search.png" fill alt="Search" />
       </div>
@@ -117,22 +117,19 @@ const SearchFlights = () => {
       <div className="absolute h-[50vh] w-[60vw] flex flex-col gap-5">
         {flightData.map((data) => {
           return (
-            <div
-              key={data.id}
-              className="flex items-center justify-center h-[60vh]"
-            >
-              <div className="grid grid-cols-3 items-center justify-center h-[40vh] px-10  w-[50vw] gap-5">
-                <div>
+            <div key={data.id} className="flex flex-col gap-20">
+              <div className="grid grid-cols-3 items-center justify-center  px-10  gap-5">
+                <div className="">
                   <Input
                     classNames={{
-                      base: "max-w-full sm:max-w-[10rem] h-10",
-                      mainWrapper: "h-full",
-                      input: "text-small",
+                      base: "max-w-full  h-10",
+                      mainWrapper: "h-full w-full",
+                      input: "text-small ",
                       inputWrapper:
                         "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
                     }}
                     placeholder="Type to search..."
-                    size="sm"
+                    size="lg"
                     startContent={<FaSearch size={18} />}
                     type="search"
                     onChange={(e) => {
@@ -142,39 +139,40 @@ const SearchFlights = () => {
                     value={source}
                     onClear={() => setSource("")}
                   />
-
-                  <div className="w-full  h-max max-w-[260px] border-small   rounded-small border-default-200 mt-5">
-                    <Listbox
-                      aria-label="Actions"
-                      onAction={(key) => {
-                        setSource(key as string);
-                        setSourceOptions([]);
-                      }}
-                      emptyContent="No results found."
-                    >
-                      {sourceOptions.map(({ city, code }) => (
-                        <ListboxItem
-                          key={code}
-                          color="primary"
-                          className="text-primary-500"
-                        >
-                          {city}
-                        </ListboxItem>
-                      ))}
-                    </Listbox>
-                  </div>
+                  {sourceOptions.length > 0 && (
+                    <div className=" w-full  h-max  border-small   rounded-small border-default-200 mt-5">
+                      <Listbox
+                        aria-label="Actions"
+                        onAction={(key) => {
+                          setSource(key as string);
+                          setSourceOptions([]);
+                        }}
+                        emptyContent="No results found."
+                      >
+                        {sourceOptions.map(({ city, code }) => (
+                          <ListboxItem
+                            key={code}
+                            color="danger"
+                            className="text-danger-500"
+                          >
+                            {city}
+                          </ListboxItem>
+                        ))}
+                      </Listbox>
+                    </div>
+                  )}
                 </div>
-                <div>
+                <div className="">
                   <Input
                     classNames={{
-                      base: "max-w-full sm:max-w-[10rem] h-10",
+                      base: "max-w-full  h-10",
                       mainWrapper: "h-full",
                       input: "text-small",
                       inputWrapper:
                         "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
                     }}
                     placeholder="Type to search..."
-                    size="sm"
+                    size="lg"
                     startContent={<FaSearch size={18} />}
                     type="search"
                     onChange={(e) => {
@@ -185,35 +183,52 @@ const SearchFlights = () => {
                     onClear={() => setDestination("")}
                   />
 
-                  <div className="w-full  h-max max-w-[260px] border-small   rounded-small border-default-200 mt-5">
-                    <Listbox
-                      aria-label="Actions"
-                      onAction={(key) => {
-                        setDestination(key as string);
-                        setDestinationOptions([]);
-                      }}
-                      emptyContent="No results found."
-                    >
-                      {destinationOptions.map(({ city, code }) => (
-                        <ListboxItem
-                          key={code}
-                          color="primary"
-                          className="text-primary-500"
-                        >
-                          {city}
-                        </ListboxItem>
-                      ))}
-                    </Listbox>
-                  </div>
+                  {destinationOptions.length > 0 && (
+                    <div className="  w-full  h-max  border-small  rounded-small border-default-200 mt-5">
+                      <Listbox
+                        aria-label="Actions"
+                        onAction={(key) => {
+                          setDestination(key as string);
+                          setDestinationOptions([]);
+                        }}
+                        emptyContent="No results found."
+                      >
+                        {destinationOptions.map(({ city, code }) => (
+                          <ListboxItem
+                            key={code}
+                            color="danger"
+                            className="text-danger-500"
+                          >
+                            {city}
+                          </ListboxItem>
+                        ))}
+                      </Listbox>
+                    </div>
+                  )}
                 </div>
                 <Input
                   type="date"
                   placeholder="Date"
                   value={flightDate}
                   onChange={(e) => setFlightDate(e.target.value)}
+                  size="lg"
+                  classNames={{
+                    base: "max-w-full  h-10",
+                    mainWrapper: "h-full w-full",
+                    input: "text-small",
+                    inputWrapper:
+                      "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
+                  }}
                 />
-                <button onClick={startScraping}>Search Flights</button>
               </div>
+              <Button
+                size="lg"
+                className=" cursor-pointer w-full"
+                color="danger"
+                variant="shadow"
+              >
+                Search Flights
+              </Button>
             </div>
           );
         })}

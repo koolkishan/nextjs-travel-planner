@@ -8,11 +8,11 @@ const Search = () => {
   const [dates, setDates] = useState(new Date());
   const handleSearch = () => {};
   const activities = [
-    { name: "Sea & Sailing", icon: "/home/sailboat.png" },
-    { name: "Trekking Tours", icon: "/home/trekking.png" },
-    { name: "City Tours", icon: "/home/bag.png" },
-    { name: "Motor Sports", icon: "/home/car.png" },
-    { name: "Jungle Safari", icon: "/home/summer-beach.png" },
+    { name: "Sea & Sailing", icon: "/home/ship.svg" },
+    { name: "Trekking Tours", icon: "/home/hiking.svg" },
+    { name: "City Tours", icon: "/home/trolley-bag.svg" },
+    { name: "Motor Sports", icon: "/home/motor-boat.svg" },
+    { name: "Jungle Safari", icon: "/home/cedar.svg" },
   ];
   return (
     <div className="h-[80vh] flex items-center justify-center">
@@ -59,7 +59,7 @@ const Search = () => {
                 key={activity.name}
                 className="flex items-center justify-center gap-5 flex-col cursor-pointer"
               >
-                <div className="p-5 bg-white bg-opacity-20 rounded-full ">
+                <div className="p-5 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all duration-300 ">
                   <div className="relative h-12 w-12 ">
                     <Image src={activity.icon} fill alt="Activity" />
                   </div>
