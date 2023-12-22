@@ -102,7 +102,7 @@ export const register = async () => {
             }
           } else if (job.data.jobType.type === "hotels") {
             console.log("Connected! Navigating to " + job.data.url);
-            await page.goto(job.data.url);
+            await page.goto(job.data.url, { timeout: 120000 });
             console.log("Navigated! Scraping page content...");
             const hotels = await startHotelScraping(
               page,
@@ -110,11 +110,15 @@ export const register = async () => {
               job.data.location
             );
 
+            console.log(`Scraping Complete, ${hotels.length} hotels found.`);
+
             await prisma.jobs.update({
               where: { id: job.data.id },
               data: { isComplete: true, status: "complete" },
             });
 
+            console.log("Job Marked as complete.");
+            console.log("Starting Loop for Hotels");
             for (const hotel of hotels) {
               await prisma.hotels.create({
                 data: {
@@ -122,10 +126,12 @@ export const register = async () => {
                   image: hotel.photo,
                   price: hotel.price,
                   jobId: job.data.id,
-                  location: job.data.location,
+                  location: job.data.location.toLowerCase(),
                 },
               });
+              console.log(`${hotel.title} inserted in DB.`);
             }
+            console.log("COMPLETE.");
           }
         } catch (error) {
           console.log({ error });
@@ -134,7 +140,8 @@ export const register = async () => {
             data: { isComplete: true, status: "failed" },
           });
         } finally {
-          await browser.close();
+          // await browser.close();
+          console.log("Browser closed successfully.");
         }
       },
       {

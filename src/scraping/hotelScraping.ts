@@ -4,13 +4,19 @@ export const startHotelScraping = async (
   location: string
 ) => {
   await page.setViewport({ width: 1920, height: 1080 });
+  console.log("Page Viewport set.");
   await page.waitForSelector(".NhpT-mod-radius-base");
+  console.log("Wait for selector complete.");
   await page.type(".NhpT-mod-radius-base:nth-child(2)", location);
+  console.log("Page location typing complete.");
   const liSelector = "ul.EMAt li:first-child";
   await page.waitForSelector(liSelector);
+  console.log("Page li selector complete.");
   await page.click(liSelector);
+  console.log("Page li click complete.");
   const buttonSelector = "#main-search-form button[type='submit']";
   await page.waitForSelector(buttonSelector);
+  console.log("Page button selector complete.");
 
   const [target] = await Promise.all([
     new Promise((resolve) => browser.once("targetcreated", resolve)),
@@ -19,11 +25,14 @@ export const startHotelScraping = async (
 
   const newPage = await target.page();
   await new Promise((resolve) => setTimeout(resolve, 1000));
+  console.log("Timeout Complete. [New Page Open]");
 
   await newPage.bringToFront();
   await new Promise((resolve) => setTimeout(resolve, 1000));
-
+  console.log("Timeout Complete. [Bring to Front]");
   //   await newPage.bringToFront();
+  console.log("Starting Page Evalution");
+  await new Promise((resolve) => setTimeout(resolve, 15000));
 
   return await newPage.evaluate(() => {
     // Your scraping logic goes here

@@ -9,4 +9,6 @@ export const USER_API_ROUTES = {
   HOTELS_SCRAPE_STATUS: "/hotels/scrape-status",
   GET_ALL_TRIPS: "/all-trips",
   GET_ALL_HOTELS: "/all-hotels",
+  GET_UNIQUE_TRIP_CITIES: "/home/unique-cities",
+  GET_CITY_HOTELS: "/home/city-hotels",
 };
