@@ -22,7 +22,7 @@ const Featured = () => {
   }, []);
 
   return (
-    <div className="my-[20vh] h-full relative z-30 mx-20 py-10 text-center">
+    <div className="my-[20vh] h-full relative z-30 mx-20 pt-10 text-center">
       <h1 className="text-4xl font-bold mb-2">Featured places to stay</h1>
       <p className="text-lg font-medium mb-5 text-gray-500">
         Popular places to stay that Arklyte recommends for you
