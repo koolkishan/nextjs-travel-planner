@@ -18,7 +18,7 @@ const PageLayout = ({ children }: { children: React.ReactNode }) => {
         children
       ) : (
         <div className=" relative flex flex-col" id="app-container">
-          <div className="fixed  dark:md:block dark:opacity-70 -bottom-[40%] -left-[20%] z-20 ">
+          {/* <div className="fixed  dark:md:block dark:opacity-70 -bottom-[40%] -left-[20%] z-20 ">
             <img
               src="/gradients/docs-left.png"
               className="relative z-60 opacity-0 shadow-black/5 data-[loaded=true]:opacity-100 shadow-none transition-transform-opacity motion-reduce:transition-none !duration-300 rounded-large"
@@ -33,7 +33,7 @@ const PageLayout = ({ children }: { children: React.ReactNode }) => {
               alt="docs right background"
               data-loaded="true"
             />
-          </div>
+          </div> */}
 
           <main className=" flex flex-col  relative">
             {isScraping && <ScrapingLoader />}

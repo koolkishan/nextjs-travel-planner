@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   try {
     const { bookingId, bookingType, userId, taxes, date } =
       await request.json();
-    // const response = await prisma.jobs.create({ data: { url, jobType } });
+
     let bookingDetails;
     switch (bookingType) {
       case "trips":
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: bookingDetails.price + taxes,
-      currency: "inr",
+      currency: "usd",
       automatic_payment_methods: {
         enabled: true,
       },
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     const response = await prisma.bookings.create({
       data: {
         bookingType,
-        bookingTypeId: bookingId,
+        bookingTypeId: bookingId.toString(),
         user: { connect: { id: userId } },
         paymentIntent: paymentIntent.id,
         totalAmount: bookingDetails?.price + taxes,

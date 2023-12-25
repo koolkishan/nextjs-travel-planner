@@ -29,8 +29,8 @@ import { useAppStore } from "@/store";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   trips: "success",
-  flights: "danger",
-  hotels: "warning",
+  flights: "secondary",
+  hotels: "default",
 };
 
 const columns = [
@@ -103,7 +103,7 @@ export default function App() {
       Array.from(statusFilter).length !== bookingsType.length
     ) {
       filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status)
+        Array.from(statusFilter).includes(user.bookingType)
       );
     }
 
@@ -263,11 +263,11 @@ export default function App() {
     );
   }, [
     filterValue,
-    statusFilter,
     onSearchChange,
-    onRowsPerPageChange,
+    statusFilter,
     bookings.length,
-    hasSearchFilter,
+    onRowsPerPageChange,
+    onClear,
   ]);
 
   const bottomContent = React.useMemo(() => {

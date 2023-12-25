@@ -1,8 +1,10 @@
 "use client";
+import { apiClient } from "@/lib";
 import { useAppStore } from "@/store";
-import { Button, Chip } from "@nextui-org/react";
+import { USER_API_ROUTES } from "@/utils";
+import { Button } from "@nextui-org/react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { FaChevronLeft } from "react-icons/fa";
 import { MdOutlineFlight } from "react-icons/md";
@@ -10,12 +12,25 @@ import { MdOutlineFlight } from "react-icons/md";
 const Flights = () => {
   const router = useRouter();
   const getRandomNumber = () => Math.floor(Math.random() * 41);
-
+  const searchParams = useSearchParams();
+  const date = searchParams.get("date");
   const { scrapedFlights, userInfo } = useAppStore();
 
-  const bookFlight = (flightId: any) => {};
+  const bookFlight = async (flightId: any) => {
+    const response = await apiClient.post(USER_API_ROUTES.CREATE_BOOKING, {
+      bookingId: flightId,
+      bookingType: "flights",
+      userId: userInfo.id,
+      taxes: 30,
+      date: new Date(date).toISOString(),
+    });
+    console.log({ response });
+    if (response.data.client_secret) {
+      router.push(`/checkout?client_secret=${response.data.client_secret}`);
+    }
+  };
   return (
-    <div className="m-10 px-[20vw]">
+    <div className="m-10 px-[20vw] min-h-[80vh]">
       <Button
         className="my-5"
         variant="shadow"
