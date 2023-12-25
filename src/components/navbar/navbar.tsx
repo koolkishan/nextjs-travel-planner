@@ -28,10 +28,11 @@ const Navbar = ({ onOpen }) => {
   const router = useRouter();
   const pathname = usePathname();
   const { userInfo } = useAppStore();
+  const routesWithImages = ["/", "/search-flights", "search-hotels"];
   return (
     <NextNavbar
       isBordered
-      className=" min-h-[10vh] bg-violet-500 bg-opacity-10 text-white"
+      className={` min-h-[10vh] bg-violet-500 bg-opacity-10 text-white`}
     >
       <NavbarBrand>
         <div

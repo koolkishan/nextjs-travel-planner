@@ -12,4 +12,6 @@ export const USER_API_ROUTES = {
   GET_UNIQUE_TRIP_CITIES: "/home/unique-cities",
   GET_CITY_HOTELS: "/home/city-hotels",
   GET_CITY_TRIPS: "/city-trips",
+  CREATE_BOOKING: "/booking",
+  GET_USER_BOOKINGS: "/booking/get-bookings",
 };

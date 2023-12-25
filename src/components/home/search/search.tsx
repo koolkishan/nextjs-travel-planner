@@ -25,9 +25,6 @@ const Search = () => {
   };
 
   const [cities, setCities] = useState([]);
-  const [selectedCity, setSelectedCity] = useState<undefined | string>(
-    undefined
-  );
 
   const searchCities = async (searchQuery: string) => {
     const response = await fetch(

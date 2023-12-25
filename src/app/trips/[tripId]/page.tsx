@@ -18,9 +18,14 @@ import { Images } from "./components/images";
 import { Button, Input, Tab, Tabs } from "@nextui-org/react";
 import Image from "next/image";
 import { Iteniary } from "./components/Iteniary";
+import { useAppStore } from "@/store";
+import { useRouter } from "next/navigation";
 
 const Trip = ({ params: { tripId } }: { params: { tripId: string } }) => {
+  const router = useRouter();
+  const { userInfo } = useAppStore();
   const [tripData, setTripData] = useState(undefined);
+  const [date, setDate] = useState(new Date());
   useEffect(() => {
     const getData = async () => {
       try {
@@ -46,6 +51,21 @@ const Trip = ({ params: { tripId } }: { params: { tripId: string } }) => {
 
     return stringWithoutHtml;
   }
+
+  const bookTrip = async () => {
+    const response = await apiClient.post(USER_API_ROUTES.CREATE_BOOKING, {
+      bookingId: tripData.id,
+      bookingType: "trips",
+      userId: userInfo.id,
+      taxes: 3300,
+      date,
+    });
+    console.log({ response });
+    if (response.data.client_secret) {
+      router.push(`/checkout?client_secret=${response.data.client_secret}`);
+    }
+  };
+
   return (
     <div>
       {tripData && (
@@ -91,7 +111,10 @@ const Trip = ({ params: { tripId } }: { params: { tripId: string } }) => {
                         <ul className="flex flex-col gap-5 ">
                           {tripData?.destinationItinerary.map((destination) => {
                             return (
-                              <li className="flex items-center   w-full text-blue-500">
+                              <li
+                                className="flex items-center   w-full text-blue-500"
+                                key={destination.place}
+                              >
                                 <span>{destination.place}</span>
                                 <span>
                                   &nbsp;{destination.totalNights} nights
@@ -116,7 +139,7 @@ const Trip = ({ params: { tripId } }: { params: { tripId: string } }) => {
                   </h3>
                   <ul className="grid grid-cols-4 gap-5 mt-3">
                     {tripData?.themes.map((theme) => (
-                      <li className="flex gap-2 items-center ">
+                      <li className="flex gap-2 items-center " key={theme}>
                         <span className="text-sm text-blue-500 bg-blue-100 p-2 rounded-full">
                           <FaCheck />
                         </span>
@@ -124,7 +147,7 @@ const Trip = ({ params: { tripId } }: { params: { tripId: string } }) => {
                       </li>
                     ))}
                     {tripData?.inclusions.map((theme) => (
-                      <li className="flex gap-2 items-center">
+                      <li className="flex gap-2 items-center" key={theme}>
                         <span className="text-sm text-blue-500 bg-blue-100 p-2 rounded-full">
                           <FaCheck />
                         </span>
@@ -210,8 +233,15 @@ const Trip = ({ params: { tripId } }: { params: { tripId: string } }) => {
                   <span>₹{tripData.price + 3300}</span>
                 </li>
               </ul>
-              <Button color="primary" size="lg" className="rounded-full">
-                Book
+              <Button
+                color="primary"
+                size="lg"
+                className="rounded-full"
+                onClick={() => {
+                  userInfo && bookTrip();
+                }}
+              >
+                {userInfo ? "Book Trip" : "Login to Book Trip"}
               </Button>
             </div>
           </div>
