@@ -4,7 +4,7 @@ import { apiClient } from "@/lib";
 import { useAppStore } from "@/store";
 import { USER_API_ROUTES } from "@/utils";
 import { cityAirportCode } from "@/utils/city-airport-codes";
-import { Input, Listbox, ListboxItem } from "@nextui-org/react";
+import { Button, Input, Listbox, ListboxItem } from "@nextui-org/react";
 import axios from "axios";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
@@ -12,6 +12,7 @@ import { FaSearch } from "react-icons/fa";
 
 const SearchHotels = () => {
   const { setScrapingType, setScraping } = useAppStore();
+  const [hotelDate, setHotelDate] = useState("");
 
   const [loadingJobId, setLoadingJobId] = useState<number | undefined>(
     undefined
@@ -77,39 +78,90 @@ const SearchHotels = () => {
   };
 
   return (
-    <div className="h-[100vh] flex items-center justify-center">
+    <div className="h-[90vh] flex items-center justify-center">
       <div className="absolute left-0 top-0 h-[100vh] w-[100vw] max-w-[100vw] overflow-hidden overflow-x-hidden">
         <Image src="/hotel-search.png" fill alt="Search" />
       </div>
-      <div className="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm"></div>
+      <div className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"></div>
       <div className="absolute h-[50vh] w-[60vw] flex flex-col gap-5">
-        <div className="flex items-center justify-center h-[60vh]">
-          <div className="grid grid-cols-3 items-center justify-center h-[40vh] px-10  w-[50vw] gap-5">
-            <Input
-              type="text"
-              label="Search for a Location"
-              onChange={(e) => searchCities(e.target.value)}
-            />
-
-            <div className="w-full min-h-[200px] max-w-[260px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100 mt-5">
-              <Listbox
-                aria-label="Actions"
-                onAction={(key) => setSelectedCity(key as string)}
-              >
-                {cities.map((city) => (
-                  <ListboxItem
-                    key={city}
-                    color="primary"
-                    className="text-primary-500"
-                  >
-                    {city}
-                  </ListboxItem>
-                ))}
-              </Listbox>
-            </div>
-
-            <button onClick={startScraping}>Search Hotels</button>
+        <div className="flex  flex-col gap-10 items-center">
+          <div className="text-white text-center flex flex-col gap-5">
+            <h3 className="text-xl font-bold">
+              Best Hotels made for you in mind!
+            </h3>
+            <h2 className="text-6xl font-extrabold">
+              Explore the exotic world.
+            </h2>
           </div>
+          <div className="grid grid-cols-2 items-center justify-center  px-10  w-[50vw] gap-5">
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Search for a Location"
+                value={selectedCity}
+                onChange={(e) => {
+                  setSelectedCity(e.target.value);
+                  searchCities(e.target.value);
+                }}
+                className="text-white placeholder:text-white relative"
+                classNames={{
+                  input: ["placeholder:text-white"],
+                }}
+                variant="bordered"
+                color="danger"
+              />
+              {cities.length > 0 && (
+                <div className="w-full min-h-[200px] max-w-[303px] border-small  rounded-small border-default-200  mt-5 absolute top-15 z-20">
+                  <div
+                    className="bg-cover bg-center bg-no-repeat relative min-h-[200px] h-full w-full px-1 py-2 rounded-small"
+                    style={{
+                      backgroundImage: 'url("/hotel-search.png")',
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-black bg-opacity-10 backdrop-blur-md rounded-small"></div>
+                    <Listbox
+                      aria-label="Actions"
+                      onAction={(key) => {
+                        setSelectedCity(key as string);
+                        setCities([]);
+                      }}
+                    >
+                      {cities.map((city) => (
+                        <ListboxItem
+                          key={city}
+                          color="danger"
+                          className="text-danger-500"
+                        >
+                          {city}
+                        </ListboxItem>
+                      ))}
+                    </Listbox>
+                  </div>
+                </div>
+              )}
+            </div>
+            <Input
+              className="text-white placeholder:text-white relative"
+              classNames={{
+                input: ["placeholder:text-white"],
+              }}
+              variant="bordered"
+              color="danger"
+              type="date"
+              placeholder="Date"
+              value={hotelDate}
+              onChange={(e) => setHotelDate(e.target.value)}
+            />
+          </div>
+          <Button
+            size="lg"
+            className=" cursor-pointer w-full"
+            color="danger"
+            variant="shadow"
+            onClick={startScraping}
+          >
+            Search Hotels
+          </Button>
         </div>
       </div>
     </div>

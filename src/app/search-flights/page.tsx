@@ -135,7 +135,7 @@ const SearchFlights = () => {
                   <div
                     className="bg-cover bg-center bg-no-repeat relative min-h-[200px] h-full w-full px-1 py-2 rounded-small"
                     style={{
-                      backgroundImage: 'url("/home/home-bg.png")',
+                      backgroundImage: 'url("flight-search.png")',
                     }}
                   >
                     <div className="absolute inset-0 bg-black bg-opacity-10 backdrop-blur-md rounded-small"></div>
@@ -185,7 +185,7 @@ const SearchFlights = () => {
                   <div
                     className="bg-cover bg-center bg-no-repeat relative min-h-[200px] h-full w-full px-1 py-2 rounded-small"
                     style={{
-                      backgroundImage: 'url("/home/home-bg.png")',
+                      backgroundImage: 'url("flight-search.png")',
                     }}
                   >
                     <div className="absolute inset-0 bg-black bg-opacity-10 backdrop-blur-md rounded-small"></div>
