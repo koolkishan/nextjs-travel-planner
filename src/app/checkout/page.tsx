@@ -16,7 +16,6 @@ const Page = () => {
   const client_secret = searchParams.get("client_secret");
 
   useEffect(() => {
-    alert(client_secret);
     if (client_secret) {
       setClientSecret(client_secret);
     }

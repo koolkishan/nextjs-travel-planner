@@ -7,12 +7,14 @@ import { cityAirportCode } from "@/utils/city-airport-codes";
 import { Button, Input, Listbox, ListboxItem } from "@nextui-org/react";
 import axios from "axios";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 
 const SearchHotels = () => {
-  const { setScrapingType, setScraping } = useAppStore();
+  const { setScrapingType, setScraping, setScrappedHotels } = useAppStore();
   const [hotelDate, setHotelDate] = useState("");
+  const router = useRouter();
 
   const [loadingJobId, setLoadingJobId] = useState<number | undefined>(
     undefined
@@ -51,11 +53,12 @@ const SearchHotels = () => {
       );
       console.log({ response });
       if (response.data.status) {
-        // set(response.data.flights);
+        setScrappedHotels(response.data.hotels);
         clearInterval(jobIntervalRef.current);
         setScraping(false);
         setScrapingType(undefined);
         console.log({ response });
+        router.push(`/hotels?date=${hotelDate}`);
       }
     } catch (err) {
       console.log({ err });

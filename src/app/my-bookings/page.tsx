@@ -30,7 +30,7 @@ import { useAppStore } from "@/store";
 const statusColorMap: Record<string, ChipProps["color"]> = {
   trips: "success",
   flights: "secondary",
-  hotels: "default",
+  hotels: "danger",
 };
 
 const columns = [
@@ -47,9 +47,9 @@ const columns = [
 ];
 
 const bookingsType = [
-  { name: "Trips", uid: "active" },
-  { name: "Flights", uid: "paused" },
-  { name: "Hotels", uid: "vacation" },
+  { name: "Trips", uid: "trips" },
+  { name: "Flights", uid: "flights" },
+  { name: "Hotels", uid: "hotels" },
 ];
 
 export default function App() {
