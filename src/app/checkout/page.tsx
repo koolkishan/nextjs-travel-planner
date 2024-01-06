@@ -3,14 +3,13 @@ import React, { useEffect, useState } from "react";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import StripeForm from "./components/stripe-form";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 const stripePromise = loadStripe("pk_test_xeqIPdYS2PpKbHmKG4gJqpde");
 
 const Page = () => {
   const [clientSecret, setClientSecret] = useState("");
 
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const client_secret = searchParams.get("client_secret");
@@ -21,8 +20,6 @@ const Page = () => {
     }
   }, [client_secret]);
 
-  const appearance = {};
-  const options = {};
   return (
     <div className="min-h-[80vh]">
       {clientSecret && (

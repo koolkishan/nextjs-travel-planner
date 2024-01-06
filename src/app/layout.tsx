@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang="en" className="light">
       <body className={inter.className}>
         <Providers>
-          <PageLayout children={children} />
+          <PageLayout>{children}</PageLayout>
           <AppProtector />
         </Providers>
       </body>

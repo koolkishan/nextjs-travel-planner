@@ -15,17 +15,17 @@ import {
   DropdownMenu,
   DropdownItem,
   Chip,
-  User,
   Pagination,
   Selection,
   ChipProps,
   SortDescriptor,
 } from "@nextui-org/react";
-import { BsThreeDots } from "react-icons/bs";
-import { FaChevronDown, FaPlus, FaSearch } from "react-icons/fa";
+
+import { FaChevronDown, FaSearch } from "react-icons/fa";
 import { apiClient } from "@/lib";
 import { USER_API_ROUTES } from "@/utils";
 import { useAppStore } from "@/store";
+import { BookingType } from "@/types/booking";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   trips: "success",
@@ -51,7 +51,9 @@ const bookingsType = [
   { name: "Flights", uid: "flights" },
   { name: "Hotels", uid: "hotels" },
 ];
-
+interface BookingTypeWithName extends BookingType {
+  name: string;
+}
 export default function App() {
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
@@ -67,16 +69,15 @@ export default function App() {
   });
 
   const [page, setPage] = React.useState(1);
-  const [bookings, setBookings] = useState([]);
-  type Bookings = (typeof bookings)[0];
+  const [bookings, setBookings] = useState<BookingTypeWithName[]>([]);
+  type Bookings = BookingTypeWithName;
   useEffect(() => {
     const getData = async () => {
       try {
         const data = await apiClient.post(USER_API_ROUTES.GET_USER_BOOKINGS, {
-          userId: userInfo.id,
+          userId: userInfo?.id,
         });
         setBookings(data.data.bookings);
-        console.log({ data });
       } catch (error) {
         console.log({ error });
       }
@@ -108,7 +109,7 @@ export default function App() {
     }
 
     return filteredUsers;
-  }, [bookings, filterValue, statusFilter]);
+  }, [bookings, filterValue, hasSearchFilter, statusFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -135,8 +136,12 @@ export default function App() {
 
       switch (columnKey) {
         case "date":
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           return cellValue.split("T")[0];
         case "createdAt":
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           return cellValue.split("T")[0];
 
         case "bookingType":
@@ -307,12 +312,18 @@ export default function App() {
         </div>
       </div>
     );
-  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+  }, [
+    selectedKeys,
+    filteredItems.length,
+    page,
+    pages,
+    onPreviousPage,
+    onNextPage,
+  ]);
 
   return (
     <div className="p-12 min-h-[80vh]">
       <Table
-        aria-label="Example table with custom cells, pagination and sorting"
         isHeaderSticky
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
@@ -329,11 +340,7 @@ export default function App() {
       >
         <TableHeader columns={headerColumns}>
           {(column) => (
-            <TableColumn
-              key={column.uid}
-              align={"start"}
-              allowsSorting={column.sortable}
-            >
+            <TableColumn key={column.uid} align={"start"}>
               {column.name}
             </TableColumn>
           )}

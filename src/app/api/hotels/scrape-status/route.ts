@@ -37,7 +37,6 @@ export async function GET(request: Request) {
       { status: 400 }
     );
   } catch (error) {
-    console.log(error);
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
         return NextResponse.json({ message: error.message }, { status: 400 });
@@ -45,4 +44,8 @@ export async function GET(request: Request) {
       return NextResponse.json({ message: error.message }, { status: 400 });
     }
   }
+  return NextResponse.json(
+    { message: "An unexpected error occurred." },
+    { status: 500 }
+  );
 }

@@ -9,23 +9,14 @@ import {
   TableCell,
   Input,
   Button,
-  Chip,
-  User,
   Pagination,
   Selection,
-  ChipProps,
   SortDescriptor,
-  Link,
 } from "@nextui-org/react";
 import { FaSearch } from "react-icons/fa";
 import { apiClient } from "@/lib";
 import { USER_API_ROUTES } from "@/utils";
-
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  active: "primary",
-  failed: "danger",
-  complete: "success",
-};
+import { HotelType } from "@/types/hotel";
 
 const columns = [
   { name: "ID", uid: "id", sortable: true },
@@ -35,18 +26,8 @@ const columns = [
   { name: "SCRAPPED ON", uid: "scrappedOn", sortable: true },
 ];
 
-const statusOptions = [
-  { name: "Active", uid: "active" },
-  { name: "Failed", uid: "failed" },
-  { name: "Complete", uid: "complete" },
-];
-
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
-
-type User = any;
-
 export default function Hotels() {
-  const [hotels, setHotels] = useState([]);
+  const [hotels, setHotels] = useState<HotelType[]>([]);
   useEffect(() => {
     const fetchData = async () => {
       // console.log("in fetch data");
@@ -62,10 +43,7 @@ export default function Hotels() {
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set([])
   );
-  const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
-    new Set(INITIAL_VISIBLE_COLUMNS)
-  );
-  const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
+
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
     column: "age",
@@ -86,17 +64,8 @@ export default function Hotels() {
         user.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status)
-      );
-    }
-
     return filteredUsers;
-  }, [hotels, filterValue, statusFilter]);
+  }, [hotels, hasSearchFilter, filterValue]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -108,47 +77,50 @@ export default function Hotels() {
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = React.useMemo(() => {
-    return [...items].sort((a: User, b: User) => {
-      const first = a[sortDescriptor.column as keyof User] as number;
-      const second = b[sortDescriptor.column as keyof User] as number;
+    return [...items].sort((a: HotelType, b: HotelType) => {
+      const first = a[sortDescriptor.column as keyof HotelType] as number;
+      const second = b[sortDescriptor.column as keyof HotelType] as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
-    const cellValue = user[columnKey as keyof User];
-    // console.log({ user, columnKey });
-    function formatDateAndTime(inputDate: string) {
-      const date = new Date(inputDate);
-      // console.log({ inputDate });
-      const options = {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        second: "numeric",
-        timeZoneName: "short",
-      };
+  const renderCell = React.useCallback(
+    (user: HotelType, columnKey: React.Key) => {
+      const cellValue = user[columnKey as keyof HotelType];
+      // console.log({ user, columnKey });
+      function formatDateAndTime(inputDate: string) {
+        const date = new Date(inputDate);
+        // console.log({ inputDate });
+        const options = {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          second: "numeric",
+          timeZoneName: "short",
+        } as Intl.DateTimeFormatOptions;
 
-      const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
-        date
-      );
+        const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
+          date
+        );
 
-      return formattedDate;
-    }
+        return formattedDate;
+      }
 
-    switch (columnKey) {
-      case "scrappedOn":
-        return formatDateAndTime(cellValue);
-      case "price":
-        return `₹${cellValue}`;
-      default:
-        return cellValue;
-    }
-  }, []);
+      switch (columnKey) {
+        case "scrappedOn":
+          return formatDateAndTime(cellValue as string);
+        case "price":
+          return `₹${cellValue}`;
+        default:
+          return cellValue;
+      }
+    },
+    []
+  );
 
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
@@ -219,7 +191,6 @@ export default function Hotels() {
   }, [
     filterValue,
     onSearchChange,
-    statusFilter,
     hotels.length,
     onRowsPerPageChange,
     onClear,
@@ -302,7 +273,7 @@ export default function Hotels() {
             )}
           </TableHeader>
           <TableBody emptyContent={"No trips found"} items={sortedItems}>
-            {(item) => (
+            {(item: HotelType) => (
               <TableRow key={item.id}>
                 {(columnKey) => (
                   <TableCell>{renderCell(item, columnKey)}</TableCell>

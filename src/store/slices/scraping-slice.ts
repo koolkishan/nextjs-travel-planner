@@ -1,3 +1,5 @@
+import { FlightType } from "@/types/flight";
+import { HotelType } from "@/types/hotel";
 import { StateCreator } from "zustand";
 
 export interface ScrapingSlice {
@@ -5,19 +7,19 @@ export interface ScrapingSlice {
   setScraping: (isScraping: boolean) => void;
   scrapingType: "hotel" | "flight" | undefined;
   setScrapingType: (scrapingType: "hotel" | "flight" | undefined) => void;
-  scrapedFlights: any;
-  setScrappedFlights: (scrappedFlights: any) => void;
-  scrapedHotels: any;
-  setScrappedHotels: (scrappedHotels: any) => void;
+  scrapedFlights: FlightType[];
+  setScrappedFlights: (scrappedFlights: FlightType[]) => void;
+  scrapedHotels: HotelType[];
+  setScrappedHotels: (scrappedHotels: HotelType[]) => void;
 }
 
-export const createScrapingSlice: StateCreator<ScrapingSlice> = (set, get) => ({
+export const createScrapingSlice: StateCreator<ScrapingSlice> = (set) => ({
   isScraping: false,
   setScraping: (isScraping) => set({ isScraping }),
   scrapingType: undefined,
   setScrapingType: (scrapingType) => set({ scrapingType }),
   scrapedFlights: [],
-  setScrappedFlights: (scrapedFlights: any) => set({ scrapedFlights }),
+  setScrappedFlights: (scrapedFlights: FlightType[]) => set({ scrapedFlights }),
   scrapedHotels: [],
-  setScrappedHotels: (scrapedHotels: any) => set({ scrapedHotels }),
+  setScrappedHotels: (scrapedHotels: HotelType[]) => set({ scrapedHotels }),
 });

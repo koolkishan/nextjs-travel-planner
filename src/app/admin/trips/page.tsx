@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -10,22 +10,15 @@ import {
   Input,
   Button,
   Chip,
-  User,
   Pagination,
   Selection,
-  ChipProps,
   SortDescriptor,
   Link,
 } from "@nextui-org/react";
 import { FaSearch } from "react-icons/fa";
 import { apiClient } from "@/lib";
 import { USER_API_ROUTES } from "@/utils";
-
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  active: "primary",
-  failed: "danger",
-  complete: "success",
-};
+import { TripType } from "@/types/trip";
 
 const columns = [
   { name: "ID", uid: "id", sortable: true },
@@ -35,18 +28,8 @@ const columns = [
   { name: "SCRAPPED ON", uid: "scrapedOn", sortable: true },
 ];
 
-const statusOptions = [
-  { name: "Active", uid: "active" },
-  { name: "Failed", uid: "failed" },
-  { name: "Complete", uid: "complete" },
-];
-
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
-
-type User = any;
-
 export default function Trips() {
-  const [trips, setTrips] = useState([]);
+  const [trips, setTrips] = useState<TripType[]>([]);
   useEffect(() => {
     const fetchData = async () => {
       // console.log("in fetch data");
@@ -62,10 +45,7 @@ export default function Trips() {
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set([])
   );
-  const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
-    new Set(INITIAL_VISIBLE_COLUMNS)
-  );
-  const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
+
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
     column: "age",
@@ -86,17 +66,9 @@ export default function Trips() {
         user.id.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status)
-      );
-    }
 
     return filteredUsers;
-  }, [trips, filterValue, statusFilter]);
+  }, [trips, hasSearchFilter, filterValue]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -108,74 +80,99 @@ export default function Trips() {
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = React.useMemo(() => {
-    return [...items].sort((a: User, b: User) => {
-      const first = a[sortDescriptor.column as keyof User] as number;
-      const second = b[sortDescriptor.column as keyof User] as number;
+    return [...items].sort((a: TripType, b: TripType) => {
+      const first = a[sortDescriptor.column as keyof TripType] as number;
+      const second = b[sortDescriptor.column as keyof TripType] as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
-    const cellValue = user[columnKey as keyof User];
-    // console.log({ user, columnKey });
-    function formatDateAndTime(inputDate: string) {
-      const date = new Date(inputDate);
-      // console.log({ inputDate });
-      const options = {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        second: "numeric",
-        timeZoneName: "short",
-      };
+  const renderCell = React.useCallback(
+    (user: TripType, columnKey: React.Key) => {
+      const cellValue = user[columnKey as keyof TripType];
+      // console.log({ user, columnKey });
+      function formatDateAndTime(inputDate: string) {
+        const date = new Date(inputDate);
+        // console.log({ inputDate });
+        const options = {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          second: "numeric",
+          timeZoneName: "short",
+        } as Intl.DateTimeFormatOptions;
 
-      const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
-        date
-      );
+        const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
+          date
+        );
 
-      return formattedDate;
-    }
-
-    switch (columnKey) {
-      case "id":
-        return (
-          <Link href={`/trip/${cellValue}`} target="_blank">
-            {cellValue}
-          </Link>
-        );
-      case "url":
-        return (
-          <Link href={cellValue} target="_blank">
-            {cellValue}
-          </Link>
-        );
-      case "destinationItinerary": {
-        const colors = ["primary", "secondary", "success", "warning", "danger"];
-        let currentIndex = 0;
-        if (currentIndex > 4) currentIndex = 0;
-        return (
-          <div className="flex gap-2">
-            {cellValue.splice(0, 4).map((value, index) => (
-              <Chip key={value.place} color={`${colors[currentIndex++]}`}>
-                {value.place}
-              </Chip>
-            ))}
-          </div>
-        );
+        return formattedDate;
       }
 
-      case "scrapedOn":
-        return formatDateAndTime(cellValue);
-      case "price":
-        return `₹${cellValue}`;
-      default:
-        return cellValue;
-    }
-  }, []);
+      switch (columnKey) {
+        case "id":
+          return (
+            <Link href={`/trip/${cellValue}`} target="_blank">
+              {cellValue as string}
+            </Link>
+          );
+        case "url":
+          return (
+            <Link href={cellValue as string} target="_blank">
+              {cellValue as string}
+            </Link>
+          );
+        case "destinationItinerary": {
+          const colors = [
+            "primary",
+            "secondary",
+            "success",
+            "warning",
+            "danger",
+          ];
+          let currentIndex = 0;
+          if (Array.isArray(cellValue)) {
+            const itineraryValues = cellValue.slice(0, 4) as {
+              place: string;
+            }[];
+            return (
+              <div className="flex gap-2">
+                {itineraryValues.map((value) => (
+                  <Chip
+                    key={value.place}
+                    color={
+                      `${colors[currentIndex++ % colors.length]}` as
+                        | "primary"
+                        | "secondary"
+                        | "success"
+                        | "warning"
+                        | "danger"
+                        | "default"
+                    }
+                  >
+                    {value.place}
+                  </Chip>
+                ))}
+              </div>
+            );
+          }
+          return null; // Or handle the non-array case appropriately
+        }
+
+        case "scrapedOn":
+          return formatDateAndTime(cellValue as string);
+        case "price":
+          return `₹${cellValue}`;
+        default:
+          return cellValue;
+      }
+    },
+    []
+  );
 
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
@@ -243,14 +240,7 @@ export default function Trips() {
         </div>
       </div>
     );
-  }, [
-    filterValue,
-    onSearchChange,
-    statusFilter,
-    trips.length,
-    onRowsPerPageChange,
-    onClear,
-  ]);
+  }, [filterValue, onSearchChange, trips.length, onRowsPerPageChange, onClear]);
 
   const bottomContent = React.useMemo(() => {
     return (
@@ -329,10 +319,12 @@ export default function Trips() {
             )}
           </TableHeader>
           <TableBody emptyContent={"No trips found"} items={sortedItems}>
-            {(item) => (
+            {(item: TripType) => (
               <TableRow key={item.id}>
                 {(columnKey) => (
-                  <TableCell>{renderCell(item, columnKey)}</TableCell>
+                  <TableCell>
+                    {renderCell(item, columnKey) as ReactNode}
+                  </TableCell>
                 )}
               </TableRow>
             )}

@@ -31,34 +31,34 @@ export async function POST(request: Request) {
         });
         break;
     }
+    if (bookingDetails) {
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: bookingDetails.price + taxes,
+        currency: "usd",
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
 
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: bookingDetails.price + taxes,
-      currency: "usd",
-      automatic_payment_methods: {
-        enabled: true,
-      },
-    });
+      await prisma.bookings.create({
+        data: {
+          bookingType,
+          bookingTypeId: bookingId.toString(),
+          user: { connect: { id: userId } },
+          paymentIntent: paymentIntent.id,
+          totalAmount: bookingDetails?.price + taxes,
+          date,
+        },
+      });
 
-    const response = await prisma.bookings.create({
-      data: {
-        bookingType,
-        bookingTypeId: bookingId.toString(),
-        user: { connect: { id: userId } },
-        paymentIntent: paymentIntent.id,
-        totalAmount: bookingDetails?.price + taxes,
-        date,
-      },
-    });
-
-    return NextResponse.json(
-      {
-        client_secret: paymentIntent.client_secret,
-      },
-      { status: 201 }
-    );
+      return NextResponse.json(
+        {
+          client_secret: paymentIntent.client_secret,
+        },
+        { status: 201 }
+      );
+    }
   } catch (error) {
-    console.log(error);
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
         return NextResponse.json({ message: error.message }, { status: 400 });
@@ -66,6 +66,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: error.message }, { status: 400 });
     }
   }
+  return NextResponse.json(
+    { message: "An unexpected error occurred." },
+    { status: 500 }
+  );
 }
 
 export async function PATCH(request: Request) {
@@ -73,7 +77,7 @@ export async function PATCH(request: Request) {
     const { paymentIntent } = await request.json();
 
     if (paymentIntent) {
-      const response = await prisma.bookings.update({
+      await prisma.bookings.update({
         where: { paymentIntent },
         data: {
           isCompleted: true,
@@ -87,7 +91,6 @@ export async function PATCH(request: Request) {
       );
     }
   } catch (error) {
-    console.log(error);
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
         return NextResponse.json({ message: error.message }, { status: 400 });
@@ -95,4 +98,8 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ message: error.message }, { status: 400 });
     }
   }
+  return NextResponse.json(
+    { message: "An unexpected error occurred." },
+    { status: 500 }
+  );
 }

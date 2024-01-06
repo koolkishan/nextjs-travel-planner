@@ -2,14 +2,14 @@ import Image from "next/image";
 import React from "react";
 
 // Function to shuffle array in-place
-const shuffleArray = (array) => {
+const shuffleArray = (array: string[]) => {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
 };
 
-const Images = ({ images }) => {
+const Images = ({ images }: { images: string[] }) => {
   // Array of random images to use when the source is not available
   const randomImages = [
     "/randomImages/random1.jpg",
@@ -22,7 +22,7 @@ const Images = ({ images }) => {
   // Shuffle the randomImages array to ensure randomness
   shuffleArray(randomImages);
 
-  const getRandomImage = (index) => {
+  const getRandomImage = (index: number) => {
     // If the images array has a valid source, use it
     if (images && images[index]) {
       return images[index];

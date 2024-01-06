@@ -1,14 +1,15 @@
+import { UserType } from "@/types/user";
 import { StateCreator } from "zustand";
 
 export interface AuthSlice {
-  userInfo: undefined | any;
-  setUserInfo: (userInfo: any) => void;
+  userInfo: undefined | UserType;
+  setUserInfo: (userInfo: UserType) => void;
   logOut: () => void;
 }
 
-export const createAuthSlice: StateCreator<AuthSlice> = (set, get) => ({
+export const createAuthSlice: StateCreator<AuthSlice> = (set) => ({
   userInfo: undefined,
-  setUserInfo: (userInfo: any) => set({ userInfo }),
+  setUserInfo: (userInfo: UserType) => set({ userInfo }),
   logOut: () => {
     set({ userInfo: undefined });
   },

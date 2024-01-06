@@ -20,22 +20,6 @@ const config: Config = {
         "mid-red": "#d90057",
         "light-red": "#ff005a",
       },
-      backgroundImage: (theme) => ({
-        "custom-gradient":
-          "linear-gradient(to bottom, " +
-          theme("colors.dark-purple") +
-          ", " +
-          theme("colors.mid-purple") +
-          ", " +
-          theme("colors.light-purple") +
-          ", " +
-          theme("colors.dark-red") +
-          ", " +
-          theme("colors.mid-red") +
-          ", " +
-          theme("colors.light-red") +
-          ")",
-      }),
     },
   },
   darkMode: "class",

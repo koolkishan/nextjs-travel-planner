@@ -1,15 +1,11 @@
 "use client";
-import ScrapingLoader from "@/components/loaders/scraping-loader";
 import { apiClient } from "@/lib";
 import { useAppStore } from "@/store";
 import { USER_API_ROUTES } from "@/utils";
-import { cityAirportCode } from "@/utils/city-airport-codes";
 import { Button, Input, Listbox, ListboxItem } from "@nextui-org/react";
-import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
-import { FaSearch } from "react-icons/fa";
 
 const SearchHotels = () => {
   const { setScrapingType, setScraping, setScrappedHotels } = useAppStore();
@@ -33,10 +29,30 @@ const SearchHotels = () => {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const jobIntervalRef = useRef<any>(undefined);
 
   useEffect(() => {
     if (loadingJobId) {
+      const checkIfJobCompleted = async () => {
+        try {
+          const response = await apiClient.get(
+            `${USER_API_ROUTES.HOTELS_SCRAPE_STATUS}?jobId=${loadingJobId}`
+          );
+          console.log({ response });
+          if (response.data.status) {
+            setScrappedHotels(response.data.hotels);
+            clearInterval(jobIntervalRef.current);
+            setScraping(false);
+            setScrapingType(undefined);
+            console.log({ response });
+            router.push(`/hotels?date=${hotelDate}`);
+          }
+        } catch (err) {
+          console.log({ err });
+        }
+      };
+
       const interval = setInterval(() => checkIfJobCompleted(), 3000);
       jobIntervalRef.current = interval;
     }
@@ -44,26 +60,14 @@ const SearchHotels = () => {
     return () => {
       if (jobIntervalRef.current) clearInterval(jobIntervalRef.current);
     };
-  }, [loadingJobId]);
-
-  const checkIfJobCompleted = async () => {
-    try {
-      const response = await apiClient.get(
-        `${USER_API_ROUTES.HOTELS_SCRAPE_STATUS}?jobId=${loadingJobId}`
-      );
-      console.log({ response });
-      if (response.data.status) {
-        setScrappedHotels(response.data.hotels);
-        clearInterval(jobIntervalRef.current);
-        setScraping(false);
-        setScrapingType(undefined);
-        console.log({ response });
-        router.push(`/hotels?date=${hotelDate}`);
-      }
-    } catch (err) {
-      console.log({ err });
-    }
-  };
+  }, [
+    hotelDate,
+    loadingJobId,
+    router,
+    setScraping,
+    setScrapingType,
+    setScrappedHotels,
+  ]);
 
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState<undefined | string>(

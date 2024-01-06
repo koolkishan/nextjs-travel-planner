@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(new URL("/login", request.url));
       }
       const { userId } = decodeJwt(token.value);
-      // Query the user
+
       const user = await prisma.user.findUnique({
         where: { id: parseInt(userId as string) },
       });
@@ -24,7 +24,6 @@ export async function GET(request: NextRequest) {
               lastName: user.lastName,
               firstName: user.firstName,
               email: user.email,
-              // profilePicture: user.profilePicture,
             },
           },
           { status: 200 }
@@ -34,7 +33,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({});
     }
   } catch (error) {
-    console.log(error);
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
         return NextResponse.json({ message: error.message }, { status: 400 });
@@ -42,4 +40,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: error.message }, { status: 400 });
     }
   }
+  return NextResponse.json(
+    { message: "An unexpected error occurred." },
+    { status: 500 }
+  );
 }

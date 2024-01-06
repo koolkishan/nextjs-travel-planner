@@ -5,7 +5,7 @@ import { useAppStore } from "@/store";
 import { USER_API_ROUTES } from "@/utils";
 
 import { usePathname, useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 const AppProtector = () => {
   const router = useRouter();

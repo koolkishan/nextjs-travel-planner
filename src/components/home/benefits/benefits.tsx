@@ -39,7 +39,19 @@ const Benefits = () => {
         <div className="flex flex-col gap-10">
           {data.map((feature) => (
             <div key={feature.title} className="flex flex-col gap-3">
-              <Chip color={feature.badgeType}>{feature.badge}</Chip>
+              <Chip
+                color={
+                  feature.badgeType as
+                    | "danger"
+                    | "default"
+                    | "primary"
+                    | "secondary"
+                    | "success"
+                    | "warning"
+                }
+              >
+                {feature.badge}
+              </Chip>
               <h4 className="block text-xl font-semibold">{feature.title}</h4>
               <p className="block  text-neutral-500">{feature.description}</p>
             </div>

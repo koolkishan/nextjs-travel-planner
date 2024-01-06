@@ -1,28 +1,51 @@
-interface PackageInfo {
-  id: string | null;
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+import {
+  DestinationDetailsType,
+  DestinationItineraryType,
+  DetailedIntinearyType,
+  PackageIteniaryType,
+} from "@/types/trip";
+import { Page } from "puppeteer";
+interface PackageType {
+  id: string;
   name: string;
-  nights: string;
-  days: string;
-  destinationItinerary: string;
+  nights: number;
+  days: number;
   inclusions: string[];
-  price: string;
-  image: string;
+  price: number;
 }
 
-//   packageIteniary = dataExtracted; Json
+interface PackageDetailsType {
+  description: string;
+  images: string[];
+  themes: string[];
+  detailedIntineary: DetailedIntinearyType[];
+  destinationItinerary: DestinationItineraryType[];
+  destinationDetails: DestinationDetailsType[];
+  packageIteniary: PackageIteniaryType[];
+}
 
-export const startPackageScraping = async (page: any, pkg: any) => {
+export const startPackageScraping = async (page: Page, pkg: PackageType) => {
   console.log("in start package scraping");
   const packageDetails = await page.evaluate(() => {
-    const packageDetails = {};
+    const packageDetails: PackageDetailsType = {
+      description: "",
+      images: [],
+      themes: [],
+      detailedIntineary: [],
+      destinationItinerary: [],
+      destinationDetails: [],
+      packageIteniary: [],
+    };
     console.log("in evalute");
     const packageElement = document.querySelector("#main-container");
     const descriptionSelector = packageElement?.querySelector("#pkgOverView");
     const regex = new RegExp("Yatra", "gi");
-    descriptionSelector?.querySelector(".readMore").click();
+    descriptionSelector?.querySelector(".readMore")?.click();
     packageDetails.description = packageElement
       ?.querySelector("#pkgOverView p")
-      ?.innerHTML.replace(regex, "Arklyte");
+      ?.innerHTML.replace(regex, "Arklyte") as string;
 
     packageDetails.images = Array.from(
       packageElement?.querySelectorAll(".galleryThumbImg")
@@ -30,28 +53,28 @@ export const startPackageScraping = async (page: any, pkg: any) => {
       imageElement
         .getAttribute("src")
         ?.replace("/t_holidays_responsivedetailsthumbimg", "")
-    );
+    ) as string[];
 
     const themesSelector = packageElement?.querySelector("#packageThemes");
     packageDetails.themes = Array.from(
       themesSelector?.querySelectorAll("li")
     ).map((li) => li.innerText.trim());
 
-    const descriptions = [];
+    const descriptions: DetailedIntinearyType[] = [];
 
     // Select all day elements
-    const dayElements = packageElement.querySelectorAll(
+    const dayElements = packageElement?.querySelectorAll(
       ".itineraryOverlay .subtitle"
     );
 
-    dayElements.forEach((dayElement) => {
-      const title = dayElement.textContent.trim();
-      let value = [];
+    dayElements?.forEach((dayElement) => {
+      const title = dayElement.textContent!.trim();
+      const value = [];
 
       // Get the next sibling elements until the next day element
       let nextElement = dayElement.nextElementSibling;
       while (nextElement && !nextElement.classList.contains("subtitle")) {
-        const textContent = nextElement.textContent.trim();
+        const textContent = nextElement.textContent!.trim();
         if (textContent) {
           value.push(textContent);
         }
@@ -65,29 +88,31 @@ export const startPackageScraping = async (page: any, pkg: any) => {
     packageDetails.detailedIntineary = descriptions;
 
     // For destination Iteniary
-    const destinationItinerary = [];
+    const destinationItinerary: { place: string; totalNights: number }[] = [];
     const destinationItinerarySelector =
-      packageElement.querySelectorAll(".type-list li");
+      packageElement?.querySelectorAll(".type-list li");
 
-    destinationItinerarySelector.forEach((element) => {
+    destinationItinerarySelector?.forEach((element) => {
       const placeElement = element.firstChild;
-      const placeText = placeElement.textContent.trim().replace(/[\n\t]/g, "");
+      const placeText = placeElement
+        ?.textContent!.trim()
+        .replace(/[\n\t]/g, "");
 
       const nightsElement = element.querySelector("span");
       let totalNights = 0;
 
       if (nightsElement) {
-        const nightsText = nightsElement.textContent.trim();
+        const nightsText = nightsElement?.textContent!.trim();
         const nightsMatch = nightsText.match(/\d+/);
         totalNights = nightsMatch ? parseInt(nightsMatch[0]) : 0;
       }
 
-      destinationItinerary.push({ place: placeText, totalNights });
+      destinationItinerary.push({ place: placeText!, totalNights });
     });
 
     packageDetails.destinationItinerary = destinationItinerary;
 
-    const cities = [];
+    const cities: { name: string; description: string; image: string }[] = [];
 
     // Click on "Read More" for the first city
     const readMoreButton = document.getElementById("readMore");
@@ -106,40 +131,46 @@ export const startPackageScraping = async (page: any, pkg: any) => {
         readMoreButtonCity.click();
       }
 
-      const cityName = cityElement.textContent.trim();
+      const cityName = cityElement?.textContent!.trim();
       const cityDescription = document
         .getElementById("aboutDestPara")
-        .textContent.trim();
+        ?.textContent!.trim();
       const cityImage = document
-        .querySelector(".info-block img")
+        .querySelector(".info-block img")!
         .getAttribute("src");
 
       cities.push({
         name: cityName,
-        description: cityDescription,
-        image: cityImage,
+        description: cityDescription!,
+        image: cityImage!,
       });
     });
 
     packageDetails.destinationDetails = cities;
 
-    const dataExtracted = [];
+    const dataExtracted: PackageIteniaryType[] = [];
     const timeline = document.querySelector(".time-line .right-column");
-    const articles = timeline.querySelectorAll("article");
-    // const cities = 1;
-    articles.forEach((article) => {
+    const articles = timeline?.querySelectorAll("article");
+
+    articles?.forEach((article) => {
       const cityNameElement = article.querySelector(
         ".title.row.acc-title .first.ng-binding"
       );
       const cityName = cityNameElement
-        ? cityNameElement.textContent.trim()
-        : null;
+        ? cityNameElement?.textContent!.trim()
+        : "";
       const daysSelector = article.querySelectorAll(".days.acc-content");
-      const daysActivity = [];
+      const daysActivity: {
+        activityType: string;
+        activityDescription: string;
+      }[][] = [];
 
-      daysSelector.forEach((daySelector, index) => {
+      daysSelector.forEach((daySelector) => {
         const activityElements = daySelector.querySelectorAll(".items-content");
-        const activities = [];
+        const activities: {
+          activityType: string;
+          activityDescription: string;
+        }[] = [];
         // Check if any activity elements exist
         if (activityElements.length > 0) {
           // Loop through each activity element
@@ -148,8 +179,8 @@ export const startPackageScraping = async (page: any, pkg: any) => {
             const activityTypeElement =
               activityElement.querySelector(".content.left.ico");
             const activityType = activityTypeElement
-              ? activityTypeElement.textContent
-                  .trim()
+              ? activityTypeElement
+                  ?.textContent!.trim()
                   .split(" ")[0]
                   .split(" ")[0]
                   .split("\n")[0]
@@ -168,11 +199,11 @@ export const startPackageScraping = async (page: any, pkg: any) => {
                 // Check if any li elements exist
                 if (liElements.length > 0) {
                   // Create an array to store scraped data
-                  const scrapedData = [];
+                  const scrapedData: { index: number; text: string }[] = [];
 
                   // Loop through each li element and extract text content
                   liElements.forEach((liElement, index) => {
-                    const liText = liElement.textContent.trim();
+                    const liText = liElement?.textContent!.trim();
                     scrapedData.push({ index: index + 1, text: liText });
                   });
 
@@ -186,15 +217,15 @@ export const startPackageScraping = async (page: any, pkg: any) => {
                 ".content.right .name a"
               );
               activityDescription = activityDescriptionElement
-                ? activityDescriptionElement.textContent.trim()
+                ? activityDescriptionElement?.textContent!.trim()
                 : null;
             } else if (activityType === "FLIGHT") {
               const places =
                 activityElement.querySelectorAll(".place span.full");
 
-              const scrappedData = [];
+              const scrappedData: string[] = [];
               places.forEach((place) => {
-                scrappedData.push(place.textContent.trim());
+                scrappedData.push(place?.textContent!.trim());
               });
               activityDescription = scrappedData;
             }
@@ -218,7 +249,5 @@ export const startPackageScraping = async (page: any, pkg: any) => {
   });
 
   const details = { ...pkg, ...packageDetails };
-  console.log({ details });
-  console.log(details.cities);
   return details;
 };

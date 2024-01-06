@@ -1,8 +1,8 @@
 "use client";
 import { redirect } from "next/navigation";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
-const Actions = ({ deleteCookie }: any) => {
+const Actions = ({ deleteCookie }: { deleteCookie: () => Promise<void> }) => {
   useEffect(() => {
     deleteCookie();
     redirect("/");

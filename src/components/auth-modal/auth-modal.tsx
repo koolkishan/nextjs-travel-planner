@@ -23,16 +23,23 @@ const ArchitectsDaughter = Architects_Daughter({
   subsets: ["latin"],
 });
 
-const AuthModal = ({ isOpen, onOpen, onOpenChange }) => {
+const AuthModal = ({
+  isOpen,
+  onOpenChange,
+}: {
+  isOpen: boolean;
+  onOpen?: () => void;
+  onOpenChange: () => void;
+}) => {
   const [modalType, setModalType] = useState("login");
   const router = useRouter();
-  const { userInfo, setUserInfo } = useAppStore();
+  const { setUserInfo } = useAppStore();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignup = async (onClose) => {
+  const handleSignup = async (onClose: () => void) => {
     const response = await apiClient.post(USER_API_ROUTES.SIGNUP, {
       firstName: firstName,
       lastName: lastName,
@@ -46,7 +53,7 @@ const AuthModal = ({ isOpen, onOpen, onOpenChange }) => {
     }
   };
 
-  const handleLogin = async (onClose) => {
+  const handleLogin = async (onClose: () => void) => {
     const response = await apiClient.post(USER_API_ROUTES.LOGIN, {
       email,
       password,
@@ -151,7 +158,7 @@ const AuthModal = ({ isOpen, onOpen, onOpenChange }) => {
               )}
               {modalType === "login" && (
                 <p>
-                  Don't have an account?&nbsp;
+                  Don{`'`}t have an account?&nbsp;
                   <Link
                     className="cursor-pointer"
                     onClick={() => {

@@ -16,13 +16,17 @@ const Flights = () => {
   const date = searchParams.get("date");
   const { scrapedFlights, userInfo } = useAppStore();
 
-  const bookFlight = async (flightId: any) => {
+  const bookFlight = async (flightId: number) => {
+    const isoDate = date
+      ? new Date(date).toISOString()
+      : new Date().toISOString();
+
     const response = await apiClient.post(USER_API_ROUTES.CREATE_BOOKING, {
       bookingId: flightId,
       bookingType: "flights",
-      userId: userInfo.id,
+      userId: userInfo?.id,
       taxes: 30,
-      date: new Date(date).toISOString(),
+      date: isoDate,
     });
     console.log({ response });
     if (response.data.client_secret) {

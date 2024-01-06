@@ -1,6 +1,6 @@
 "use client";
 import { apiClient } from "@/lib";
-import { USER_API_ROUTES } from "@/utils";
+import { USER_API_ROUTES, removeHtmlTags } from "@/utils";
 
 import React, { useEffect, useState } from "react";
 import {
@@ -12,7 +12,6 @@ import {
   FaWhatsapp,
 } from "react-icons/fa";
 import { IoPerson, IoPricetag } from "react-icons/io5";
-import { IoMdPricetag } from "react-icons/io";
 
 import { Images } from "./components/images";
 import { Button, Input, Tab, Tabs } from "@nextui-org/react";
@@ -20,11 +19,13 @@ import Image from "next/image";
 import { Iteniary } from "./components/Iteniary";
 import { useAppStore } from "@/store";
 import { useRouter } from "next/navigation";
+import { TripType } from "@/types/trip";
 
 const Trip = ({ params: { tripId } }: { params: { tripId: string } }) => {
   const router = useRouter();
   const { userInfo } = useAppStore();
-  const [tripData, setTripData] = useState(undefined);
+  const [tripData, setTripData] = useState<TripType | undefined>(undefined);
+
   const [date, setDate] = useState(new Date());
   useEffect(() => {
     const getData = async () => {
@@ -42,23 +43,22 @@ const Trip = ({ params: { tripId } }: { params: { tripId: string } }) => {
     getData();
   }, [tripId]);
 
-  function removeHtmlTags(inputString) {
-    // Define a regular expression pattern to match HTML tags
-    const htmlTagsRegex = /<[^>]*>/g;
-
-    // Replace HTML tags with an empty string
-    const stringWithoutHtml = inputString.replace(htmlTagsRegex, "");
-
-    return stringWithoutHtml;
-  }
+  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newDate = event.target.value
+      ? new Date(event.target.value)
+      : new Date();
+    setDate(newDate);
+  };
 
   const bookTrip = async () => {
+    const isoDate = date.toISOString();
+
     const response = await apiClient.post(USER_API_ROUTES.CREATE_BOOKING, {
-      bookingId: tripData.id,
+      bookingId: tripData?.id,
       bookingType: "trips",
-      userId: userInfo.id,
+      userId: userInfo?.id,
       taxes: 3300,
-      date,
+      date: isoDate,
     });
     console.log({ response });
     if (response.data.client_secret) {
@@ -171,7 +171,7 @@ const Trip = ({ params: { tripId } }: { params: { tripId: string } }) => {
                   </h3>
                   <div>
                     <Tabs variant="bordered" color="primary">
-                      {tripData.destinationDetails.map((city, index) => (
+                      {tripData.destinationDetails.map((city) => (
                         <Tab
                           key={city.name}
                           title={city.name}
@@ -204,6 +204,7 @@ const Trip = ({ params: { tripId } }: { params: { tripId: string } }) => {
                   endContent={<FaCalendar />}
                   placeholder="Check-in Check-out"
                   type="date"
+                  onChange={handleDateChange}
                 />
                 <Input
                   endContent={<IoPerson />}

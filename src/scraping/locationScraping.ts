@@ -1,16 +1,20 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+
+import { Page } from "puppeteer";
+
 interface PackageInfo {
   id: string | null;
   name: string;
   nights: number;
   days: number;
-  // destinationItinerary: string;
+
   inclusions: string[];
   price: number;
-  // image: string;
 }
 
 export const startLocationScraping = async (
-  page: any
+  page: Page
 ): Promise<PackageInfo[]> => {
   return await page.evaluate(() => {
     const packageElements = document.querySelectorAll(".packages-container");
@@ -75,15 +79,6 @@ export const startLocationScraping = async (
       const priceElement = packageElement.querySelector(".final-price .amount");
       packageInfo.price =
         parseInt(priceElement?.textContent?.replace(/,/g, "")) || 0;
-
-      // Extracting package image
-      // const imageElement = packageElement.querySelector(
-      //   ".package-image"
-      // ) as HTMLImageElement;
-
-      // packageInfo.image = imageElement
-      //   ? imageElement.getAttribute("src") || ""
-      //   : "";
 
       packages.push(packageInfo);
     });

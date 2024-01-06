@@ -4,7 +4,9 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 const Featured = () => {
-  const [cities, setCities] = useState([]);
+  const [cities, setCities] = useState<
+    { name: string; image: string; trips: number }[]
+  >([]);
 
   useEffect(() => {
     const getUniqueCities = async () => {

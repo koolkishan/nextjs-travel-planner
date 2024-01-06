@@ -19,12 +19,12 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAppStore } from "@/store";
 
 const ArchitectsDaughter = Architects_Daughter({
-  weight: "400", // if single weight, otherwise you use array like [400, 500, 700],
-  style: "normal", // if single style, otherwise you use array like ['normal', 'italic']
+  weight: "400",
+  style: "normal",
   subsets: ["latin"],
 });
 
-const Navbar = ({ onOpen }) => {
+const Navbar = ({ onOpen }: { onOpen: () => void }) => {
   const router = useRouter();
   const pathname = usePathname();
   const { userInfo } = useAppStore();
@@ -133,7 +133,7 @@ const Navbar = ({ onOpen }) => {
                     isBordered
                     as="button"
                     className="transition-transform"
-                    color="priamry"
+                    color="primary"
                     name={userInfo.firstName}
                     size="md"
                   />

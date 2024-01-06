@@ -7,22 +7,24 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { FaChevronLeft } from "react-icons/fa";
-import { MdOutlineFlight } from "react-icons/md";
 
 const Hotels = () => {
   const router = useRouter();
-
   const searchParams = useSearchParams();
   const date = searchParams.get("date");
   const { scrapedHotels, userInfo } = useAppStore();
 
-  const bookHotel = async (hotelId: any) => {
+  const bookHotel = async (hotelId: number) => {
+    const isoDate = date
+      ? new Date(date).toISOString()
+      : new Date().toISOString();
+
     const response = await apiClient.post(USER_API_ROUTES.CREATE_BOOKING, {
       bookingId: hotelId,
       bookingType: "hotels",
-      userId: userInfo.id,
+      userId: userInfo?.id,
       taxes: 30,
-      date: new Date(date).toISOString(),
+      date: isoDate,
     });
     console.log({ response });
     if (response.data.client_secret) {
@@ -68,10 +70,6 @@ const Hotels = () => {
                       <h3 className="font-semibold capitalize text-neutral-900  text-base">
                         {hotel.name}
                       </h3>
-                      <div>
-                        {/* <span><FaLocat</span> */}
-                        <span className="capitalize">{hotel.city}</span>
-                      </div>
                       <span className="text-sm text-neutral-500 font-normal">
                         <strong className="text-black">${hotel.price}</strong>{" "}
                         /night

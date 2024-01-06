@@ -13,14 +13,13 @@ import {
   DropdownMenu,
   DropdownItem,
   Chip,
-  User,
   Pagination,
   Selection,
   ChipProps,
   SortDescriptor,
   Link,
 } from "@nextui-org/react";
-import { FaChevronDown, FaPlus, FaSearch } from "react-icons/fa";
+import { FaChevronDown, FaSearch } from "react-icons/fa";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   active: "primary",
@@ -29,11 +28,11 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 };
 
 const columns = [
-  { name: "ID", uid: "id", sortable: true },
-  { name: "URL", uid: "url", sortable: true },
-  { name: "CREATED AT", uid: "createdAt", sortable: true },
+  { name: "ID", uid: "id" },
+  { name: "URL", uid: "url" },
+  { name: "CREATED AT", uid: "createdAt" },
   { name: "JOB TYPE", uid: "jobType" },
-  { name: "STATUS", uid: "status", sortable: true },
+  { name: "STATUS", uid: "status" },
 ];
 
 const statusOptions = [
@@ -42,18 +41,21 @@ const statusOptions = [
   { name: "Complete", uid: "complete" },
 ];
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
+interface JobType {
+  id: string;
+  url: string;
+  createdAt: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  jobType: any;
+  status: "active" | "failed" | "complete";
+}
 
-type User = any;
-
-export default function CurrentlyScrapingTable({ jobs }) {
+export default function CurrentlyScrapingTable({ jobs }: { jobs: JobType[] }) {
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set([])
   );
-  const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
-    new Set(INITIAL_VISIBLE_COLUMNS)
-  );
+
   const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
@@ -85,7 +87,7 @@ export default function CurrentlyScrapingTable({ jobs }) {
     }
 
     return filteredUsers;
-  }, [jobs, filterValue, statusFilter]);
+  }, [jobs, hasSearchFilter, statusFilter, filterValue]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -96,67 +98,58 @@ export default function CurrentlyScrapingTable({ jobs }) {
     return filteredItems.slice(start, end);
   }, [page, filteredItems, rowsPerPage]);
 
-  const sortedItems = React.useMemo(() => {
-    return [...items].sort((a: User, b: User) => {
-      const first = a[sortDescriptor.column as keyof User] as number;
-      const second = b[sortDescriptor.column as keyof User] as number;
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
+  const renderCell = React.useCallback(
+    (user: JobType, columnKey: React.Key) => {
+      const cellValue = user[columnKey as keyof JobType];
+      console.log({ user, columnKey });
+      function formatDateAndTime(inputDate: string) {
+        const date = new Date(inputDate);
 
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
-  }, [sortDescriptor, items]);
+        const options = {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          second: "numeric",
+          timeZoneName: "short",
+        } as Intl.DateTimeFormatOptions;
 
-  const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
-    const cellValue = user[columnKey as keyof User];
-    console.log({ user, columnKey });
-    function formatDateAndTime(inputDate: string) {
-      const date = new Date(inputDate);
-
-      const options = {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        second: "numeric",
-        timeZoneName: "short",
-      };
-
-      const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
-        date
-      );
-
-      return formattedDate;
-    }
-    switch (columnKey) {
-      // case "id":
-      //   return <Link href='/'>{cellValue}</Link>
-      case "url":
-        return (
-          <Link href={cellValue} target="_blank">
-            {cellValue}
-          </Link>
-        );
-      case "jobType":
-        return cellValue.type;
-      case "createdAt":
-        return formatDateAndTime(cellValue);
-      case "status":
-        return (
-          <Chip
-            className="capitalize"
-            color={statusColorMap[user.status]}
-            size="sm"
-            variant="flat"
-          >
-            {cellValue}
-          </Chip>
+        const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
+          date
         );
 
-      default:
-        return cellValue;
-    }
-  }, []);
+        return formattedDate;
+      }
+      switch (columnKey) {
+        case "url":
+          return (
+            <Link href={cellValue} target="_blank">
+              {cellValue}
+            </Link>
+          );
+        case "jobType":
+          return cellValue.type;
+        case "createdAt":
+          return formatDateAndTime(cellValue);
+        case "status":
+          return (
+            <Chip
+              className="capitalize"
+              color={statusColorMap[user.status]}
+              size="sm"
+              variant="flat"
+            >
+              {cellValue}
+            </Chip>
+          );
+
+        default:
+          return cellValue;
+      }
+    },
+    []
+  );
 
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
@@ -327,13 +320,12 @@ export default function CurrentlyScrapingTable({ jobs }) {
           <TableColumn
             key={column.uid}
             align={column.uid === "actions" ? "center" : "start"}
-            allowsSorting={column.sortable}
           >
             {column.name}
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"No jobs found"} items={sortedItems}>
+      <TableBody emptyContent={"No jobs found"} items={items}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (

@@ -1,30 +1,24 @@
-import { Button, Input, Listbox, ListboxItem } from "@nextui-org/react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { FaCalendar, FaCalendarAlt, FaMarker, FaSearch } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { Button, Input, Listbox, ListboxItem } from "@nextui-org/react";
+import { FaCalendarAlt, FaSearch } from "react-icons/fa";
 
 const Search = () => {
   const router = useRouter();
-  const [searchLoaction, setSearchLoaction] = useState("");
-  const [dates, setDates] = useState<any>(new Date());
+  const [searchLocation, setSearchLocation] = useState("");
+  const [dates, setDates] = useState(() => {
+    // Get today's date in YYYY-MM-DD format
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  });
+  const [cities, setCities] = useState([]);
+
   const handleSearch = () => {
-    if (searchLoaction && dates) {
-      const formattedDate = new Date(dates).toLocaleDateString("en-GB");
-
-      // Split the formatted date to extract day, month, and year
-      const [day, month, year] = formattedDate.split("/");
-
-      // Create the final date string in 'dd-mm-yyyy' format
-      const formattedDateStr = `${day.padStart(2, "0")}-${month.padStart(
-        2,
-        "0"
-      )}-${year}`;
-      router.push(`/trips?city=${searchLoaction}&dates=${formattedDateStr}`);
+    if (searchLocation && dates) {
+      router.push(`/trips?city=${searchLocation}&dates=${dates}`);
     }
   };
-
-  const [cities, setCities] = useState([]);
 
   const searchCities = async (searchQuery: string) => {
     const response = await fetch(
@@ -43,6 +37,7 @@ const Search = () => {
     { name: "Motor Sports", icon: "/home/motor-boat.svg" },
     { name: "Jungle Safari", icon: "/home/cedar.svg" },
   ];
+
   return (
     <div className="h-[80vh] flex items-center justify-center">
       <div className=" absolute left-0 top-0 h-[100vh] w-[100vw] max-w-[100vw] overflow-hidden overflow-x-hidden">
@@ -61,24 +56,18 @@ const Search = () => {
             variant="bordered"
             className="text-white placeholder:text-white relative"
             startContent={<FaSearch />}
-            value={searchLoaction}
+            value={searchLocation}
             onChange={(e) => {
-              setSearchLoaction(e.target.value);
+              setSearchLocation(e.target.value);
               searchCities(e.target.value);
             }}
-            placeholder="Search Loaction"
+            placeholder="Search Location"
             classNames={{
               input: ["placeholder:text-white"],
             }}
           />
           {cities.length > 0 && (
-            <div
-              className="w-full min-h-[200px] max-w-[315px] border-small  rounded-small border-default-200  mt-5
-          absolute top-48 
-          
-          z-20
-          "
-            >
+            <div className="w-full min-h-[200px] max-w-[315px] border-small  rounded-small border-default-200  mt-5 absolute top-48 z-20">
               <div
                 className="bg-cover bg-center bg-no-repeat relative min-h-[200px] h-full w-full px-1 py-2 rounded-small"
                 style={{
@@ -86,11 +75,10 @@ const Search = () => {
                 }}
               >
                 <div className="absolute inset-0 bg-black bg-opacity-10 backdrop-blur-md rounded-small"></div>
-
                 <Listbox
                   aria-label="Actions"
                   onAction={(key) => {
-                    setSearchLoaction(key as string);
+                    setSearchLocation(key as string);
                     setCities([]);
                   }}
                   className="rounded-small"

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import prisma from "../../../../lib/prisma";
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const maxHotelsPerCity = 8;
     const randomCities = await prisma.hotels.findMany({
@@ -47,4 +47,8 @@ export async function GET(request: Request) {
       return NextResponse.json({ message: error.message }, { status: 400 });
     }
   }
+  return NextResponse.json(
+    { message: "An unexpected error occurred." },
+    { status: 500 }
+  );
 }

@@ -1,5 +1,4 @@
 "use client";
-import ScrapingLoader from "@/components/loaders/scraping-loader";
 import { apiClient } from "@/lib";
 import { useAppStore } from "@/store";
 import { USER_API_ROUTES } from "@/utils";
@@ -11,8 +10,17 @@ import React, { useEffect, useRef, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 
 const SearchFlights = () => {
-  const { setScrapingType, setScraping, setScrappedFlights } = useAppStore();
   const router = useRouter();
+  const { setScrapingType, setScraping, setScrappedFlights } = useAppStore();
+  const [source, setSource] = useState("");
+  const [sourceOptions, setSourceOptions] = useState<
+    { city: string; code: string }[]
+  >([]);
+  const [destination, setDestination] = useState("");
+  const [destinationOptions, setDestinationOptions] = useState<
+    { city: string; code: string }[]
+  >([]);
+  const [flightDate, setFlightDate] = useState("");
 
   const [loadingJobId, setLoadingJobId] = useState<number | undefined>(
     undefined
@@ -31,10 +39,30 @@ const SearchFlights = () => {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const jobIntervalRef = useRef<any>(undefined);
 
   useEffect(() => {
     if (loadingJobId) {
+      const checkIfJobCompleted = async () => {
+        try {
+          const response = await apiClient.get(
+            `${USER_API_ROUTES.FLIGHT_SCRAPE_STATUS}?jobId=${loadingJobId}`
+          );
+          console.log({ response });
+          if (response.data.status) {
+            setScrappedFlights(response.data.flights);
+            // setFlightsDate()
+            clearInterval(jobIntervalRef.current);
+            setScraping(false);
+            setScrapingType(undefined);
+            router.push(`/flights?date=${flightDate}`);
+          }
+        } catch (err) {
+          console.log({ err });
+        }
+      };
+
       const interval = setInterval(() => checkIfJobCompleted(), 3000);
       jobIntervalRef.current = interval;
     }
@@ -42,42 +70,20 @@ const SearchFlights = () => {
     return () => {
       if (jobIntervalRef.current) clearInterval(jobIntervalRef.current);
     };
-  }, [loadingJobId]);
-
-  const checkIfJobCompleted = async () => {
-    try {
-      const response = await apiClient.get(
-        `${USER_API_ROUTES.FLIGHT_SCRAPE_STATUS}?jobId=${loadingJobId}`
-      );
-      console.log({ response });
-      if (response.data.status) {
-        setScrappedFlights(response.data.flights);
-        // setFlightsDate()
-        clearInterval(jobIntervalRef.current);
-        setScraping(false);
-        setScrapingType(undefined);
-        router.push(`/flights?date=${flightDate}`);
-      }
-    } catch (err) {
-      console.log({ err });
-    }
-  };
-
-  const [source, setSource] = useState("");
-  const [sourceOptions, setSourceOptions] = useState([]);
-
-  const [destination, setDestination] = useState("");
-  const [destinationOptions, setDestinationOptions] = useState([]);
-
-  const [flightDate, setFlightDate] = useState("");
-  const [jobInterval, setJobInterval] = useState<any>(undefined);
-  const [flights, setFlights] = useState([]);
+  }, [
+    flightDate,
+    loadingJobId,
+    router,
+    setScraping,
+    setScrapingType,
+    setScrappedFlights,
+  ]);
 
   const handleSourceChange = (query: string) => {
     const lowercaseQuery = query.toLowerCase();
 
     const matchingCities = Object.entries(cityAirportCode)
-      .filter(([code, city]) => city.toLowerCase().includes(lowercaseQuery))
+      .filter(([, city]) => city.toLowerCase().includes(lowercaseQuery))
       .map(([code, city]) => ({ code, city }))
       .splice(0, 5);
 
@@ -88,7 +94,7 @@ const SearchFlights = () => {
     const lowercaseQuery = query.toLowerCase();
 
     const matchingCities = Object.entries(cityAirportCode)
-      .filter(([code, city]) => city.toLowerCase().includes(lowercaseQuery))
+      .filter(([, city]) => city.toLowerCase().includes(lowercaseQuery))
       .map(([code, city]) => ({ code, city }))
       .splice(0, 5);
 

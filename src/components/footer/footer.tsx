@@ -4,15 +4,10 @@ import { Architects_Daughter } from "next/font/google";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-import { Input, Button } from "@nextui-org/react";
 import {
-  FaChevronRight,
-  FaFacebook,
   FaFacebookF,
   FaInstagram,
-  FaLinkedin,
   FaLinkedinIn,
-  FaTelegram,
   FaTwitter,
 } from "react-icons/fa";
 

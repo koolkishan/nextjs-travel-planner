@@ -4,16 +4,12 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { BiSolidCategory } from "react-icons/bi";
 import { FaBookOpen, FaHome, FaHotel } from "react-icons/fa";
-import { BsFillBarChartFill, BsPhoneFill } from "react-icons/bs";
-import { MdAddBox } from "react-icons/md";
-import { HiCollection } from "react-icons/hi";
 import { LuLogOut } from "react-icons/lu";
 import { MdOutlineDataUsage } from "react-icons/md";
 import {
   Sidebar as ReactProSidebar,
   Menu,
   MenuItem,
-  SubMenu,
   sidebarClasses,
 } from "react-pro-sidebar";
 import { Architects_Daughter } from "next/font/google";
@@ -74,7 +70,7 @@ const Sidebar = () => {
         <Menu
           className="h-[100vh] max-h-[100vh] text-black overflow-hidden"
           menuItemStyles={{
-            button: ({ level, active, disabled }) => {
+            button: ({ level, active }) => {
               const backgroundColor = level === 0 ? "#ffffff" : "#ffffff";
 
               return {
@@ -104,28 +100,15 @@ const Sidebar = () => {
 
           {menuItems.map((item, index) => (
             <React.Fragment key={index}>
-              {item.subMenuItems ? (
-                <SubMenu label={item.label} icon={item.icon}>
-                  {item.subMenuItems.map((subItem, subIndex) => (
-                    <MenuItem
-                      key={subIndex}
-                      onClick={() => handleItemClick(subItem.link)}
-                      icon={subItem.icon}
-                      active={selectedItem === subItem.link}
-                    >
-                      {subItem.label}
-                    </MenuItem>
-                  ))}
-                </SubMenu>
-              ) : (
-                <MenuItem
-                  onClick={() => handleItemClick(item.link)}
-                  icon={item.icon}
-                  active={selectedItem === item.link}
-                >
-                  {item.label}
-                </MenuItem>
-              )}
+              (
+              <MenuItem
+                onClick={() => handleItemClick(item.link)}
+                icon={item.icon}
+                active={selectedItem === item.link}
+              >
+                {item.label}
+              </MenuItem>
+              )
             </React.Fragment>
           ))}
           <MenuItem

@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+
+import { Page } from "puppeteer";
+
 interface Flight {
   airlineLogo: string;
   departureTime: string;
@@ -7,7 +12,7 @@ interface Flight {
   price: number;
 }
 
-export const startFlightScraping = async (page: any): Promise<Flight[]> => {
+export const startFlightScraping = async (page: Page): Promise<Flight[]> => {
   return await page.evaluate(async (): Promise<Flight[]> => {
     await new Promise((resolve) => setTimeout(resolve, 5000));
 

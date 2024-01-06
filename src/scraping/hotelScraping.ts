@@ -1,6 +1,11 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+
+import { Browser, Page } from "puppeteer";
+
 export const startHotelScraping = async (
-  page: any,
-  browser: any,
+  page: Page,
+  browser: Browser,
   location: string
 ) => {
   await page.setViewport({ width: 1920, height: 1080 });

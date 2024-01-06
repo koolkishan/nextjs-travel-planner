@@ -1,7 +1,8 @@
+import { DetailedIntinearyType } from "@/types/trip";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import React from "react";
 
-const Iteniary = ({ data }) => {
+const Iteniary = ({ data }: { data: DetailedIntinearyType[] }) => {
   return (
     <div>
       <div></div>
@@ -10,7 +11,7 @@ const Iteniary = ({ data }) => {
           return (
             <div
               className="grid grid-cols-3 items-center justify-center z-30"
-              key={dt}
+              key={dt.title}
             >
               <div className=" flex items-center justify-center z-20">
                 <div className="h-[180px] w-[180px] bg-white flex items-center justify-center rounded-full border-3 border-dotted border-blue-500 z-20">

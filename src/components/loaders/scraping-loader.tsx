@@ -2,7 +2,7 @@ import { useAppStore } from "@/store";
 import React from "react";
 
 const ScrapingLoader = () => {
-  const { isScraping, scrapingType } = useAppStore();
+  const { scrapingType } = useAppStore();
   return (
     <div className="h-[100vh] w-[100vw] flex items-center justify-center flex-col gap-20 text-blue-text-title fixed top-0 right-0 bg-white z-50">
       <div className="w-full flex items-center justify-center">
