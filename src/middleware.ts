@@ -29,12 +29,11 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next();
     }
   } catch (err) {
-    if (err.name === "JWTExpired") {
+    if (err instanceof Error && err.name === "JWTExpired") {
       return NextResponse.redirect(
         new URL("/login?msg='Jwt Expired'", request.url)
       );
     }
-    console.log(err);
     return NextResponse.json(
       { message: "An unexpected error occurred." },
       { status: 500 }

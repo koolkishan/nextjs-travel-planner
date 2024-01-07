@@ -12,6 +12,7 @@ import {
   Avatar,
   DropdownMenu,
   DropdownItem,
+  AvatarIcon,
 } from "@nextui-org/react";
 import { Architects_Daughter } from "next/font/google";
 import Image from "next/image";
@@ -133,8 +134,12 @@ const Navbar = ({ onOpen }: { onOpen: () => void }) => {
                     isBordered
                     as="button"
                     className="transition-transform"
-                    color="primary"
-                    name={userInfo.firstName}
+                    icon={<AvatarIcon />}
+                    classNames={{
+                      base: "bg-gradient-to-br from-[#ff578f] to-[#945bff]",
+                      icon: "text-black/80",
+                    }}
+                    // name={userInfo.firstName}
                     size="md"
                   />
                 </DropdownTrigger>
