@@ -8,7 +8,6 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const city = searchParams.get("city");
-    console.log("first", city);
     if (city) {
       const allTrips = await prisma.trips.findMany();
       const filteredTrips = allTrips.filter((trip) => {

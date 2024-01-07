@@ -18,8 +18,6 @@ export async function GET() {
 
     const citiesArray = randomCities.map((city) => city.location.toLowerCase());
 
-    console.log(citiesArray);
-
     const hotelsByCities = await Promise.all(
       citiesArray.map(async (city) => {
         const hotelsForCity = await prisma.hotels.findMany({
@@ -33,7 +31,7 @@ export async function GET() {
         return { city, hotelsForCity };
       })
     );
-    console.log({ hotelsByCities, citiesArray });
+
     return NextResponse.json({
       hotels: hotelsByCities,
       cities: citiesArray,

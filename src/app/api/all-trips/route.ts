@@ -7,7 +7,6 @@ export async function GET() {
     const trips = await prisma.trips.findMany({
       orderBy: { scrapedOn: "desc" },
     });
-    console.log({ trips });
     if (trips) {
       return NextResponse.json(
         {

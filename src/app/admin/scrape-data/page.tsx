@@ -14,6 +14,7 @@ import {
 } from "@nextui-org/react";
 import { CurrentlyScrapingTable } from "./components/currently-scraping-table";
 import axios from "axios";
+import ScrapingQueue from "@/components/admin/scraping-queue/scraping-queue";
 
 const ScrapeTrips = () => {
   const [cities, setCities] = useState([]);
@@ -21,7 +22,6 @@ const ScrapeTrips = () => {
     undefined
   );
   const [jobs, setJobs] = useState([]);
-  const [ongoingJobs, setOngoingJobs] = useState(0);
 
   const searchCities = async (searchQuery: string) => {
     const response = await fetch(
@@ -46,7 +46,6 @@ const ScrapeTrips = () => {
         jobType: { type: "location" },
       }),
     });
-    console.log({ response });
   };
 
   useEffect(() => {
@@ -55,7 +54,6 @@ const ScrapeTrips = () => {
         "http://localhost:3000/api/admin/jobDetails"
       );
       setJobs(data.data.jobs);
-      setOngoingJobs(data.data.onGoingJobs);
     };
     const interval = setInterval(() => getData(), 3000);
 
@@ -63,18 +61,6 @@ const ScrapeTrips = () => {
       clearInterval(interval);
     };
   }, []);
-
-  const onGoingJobColor = () => {
-    if (ongoingJobs <= 5) return "bg-green-500";
-    else if (ongoingJobs <= 10) return "bg-orange-500";
-    else return "bg-red-500";
-  };
-
-  const onGoingJobTextColor = () => {
-    if (ongoingJobs <= 5) return "text-green-500";
-    else if (ongoingJobs <= 10) return "text-orange-500";
-    else return "text-red-500";
-  };
 
   return (
     <section className="m-10 grid grid-cols-3 gap-5">
@@ -145,22 +131,7 @@ const ScrapeTrips = () => {
           </Button>
         </CardFooter>
       </Card>
-
-      <Card className="min-w-[300px]">
-        <CardHeader>Current Queue</CardHeader>
-        <CardBody className="flex items-center justify-center">
-          <div
-            className={`h-52 w-52 ${onGoingJobColor()} rounded-full  flex items-center justify-center`}
-          >
-            <div className="h-44 w-44 bg-white rounded-full flex items-center justify-center">
-              <h4 className={`text-6xl font-bold ${onGoingJobTextColor()}`}>
-                {ongoingJobs}
-              </h4>
-            </div>
-          </div>
-        </CardBody>
-      </Card>
-
+      <ScrapingQueue />
       <div className="col-span-3">
         <CurrentlyScrapingTable jobs={jobs} />
       </div>

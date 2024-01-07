@@ -40,7 +40,7 @@ const Sidebar = () => {
       icon: <FaHotel />,
       link: "/admin/hotels",
     },
-    { label: "Bookings", icon: <FaBookOpen />, link: "/admin/orders" },
+    { label: "Bookings", icon: <FaBookOpen />, link: "/admin/bookings" },
     {
       label: "Scrape Data",
       icon: <MdOutlineDataUsage />,
@@ -100,7 +100,6 @@ const Sidebar = () => {
 
           {menuItems.map((item, index) => (
             <React.Fragment key={index}>
-              (
               <MenuItem
                 onClick={() => handleItemClick(item.link)}
                 icon={item.icon}
@@ -108,7 +107,6 @@ const Sidebar = () => {
               >
                 {item.label}
               </MenuItem>
-              )
             </React.Fragment>
           ))}
           <MenuItem

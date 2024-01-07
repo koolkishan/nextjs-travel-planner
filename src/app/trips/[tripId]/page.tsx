@@ -34,7 +34,6 @@ const Trip = ({ params: { tripId } }: { params: { tripId: string } }) => {
           `${USER_API_ROUTES.TRIPDATA}?id=${tripId}`
         );
         setTripData(data.data);
-        console.log({ data });
       } catch (err) {
         console.log({ err });
       }
@@ -60,7 +59,6 @@ const Trip = ({ params: { tripId } }: { params: { tripId: string } }) => {
       taxes: 3300,
       date: isoDate,
     });
-    console.log({ response });
     if (response.data.client_secret) {
       router.push(`/checkout?client_secret=${response.data.client_secret}`);
     }

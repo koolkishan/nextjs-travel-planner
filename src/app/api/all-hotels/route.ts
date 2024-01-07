@@ -7,7 +7,6 @@ export async function GET() {
     const hotels = await prisma.hotels.findMany({
       orderBy: { scrappedOn: "desc" },
     });
-    console.log({ hotels });
     if (hotels) {
       return NextResponse.json(
         {

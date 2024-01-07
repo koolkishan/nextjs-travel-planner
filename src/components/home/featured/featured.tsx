@@ -15,7 +15,6 @@ const Featured = () => {
           USER_API_ROUTES.GET_UNIQUE_TRIP_CITIES
         );
         setCities(response.data.cities);
-        console.log({ response });
       } catch (error) {
         console.log({ error });
       }

@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -17,40 +19,41 @@ import {
   Selection,
   ChipProps,
   SortDescriptor,
-  Link,
 } from "@nextui-org/react";
+
 import { FaChevronDown, FaSearch } from "react-icons/fa";
+import { apiClient } from "@/lib";
+import { USER_API_ROUTES } from "@/utils";
+import { BookingType } from "@/types/booking";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
-  active: "primary",
-  failed: "danger",
-  complete: "success",
+  trips: "success",
+  flights: "secondary",
+  hotels: "danger",
 };
 
 const columns = [
   { name: "ID", uid: "id" },
-  { name: "URL", uid: "url" },
-  { name: "CREATED AT", uid: "createdAt" },
-  { name: "JOB TYPE", uid: "jobType" },
-  { name: "STATUS", uid: "status" },
+  { name: "BOOKING TYPE", uid: "bookingType" },
+  { name: "NAME", uid: "name" },
+  { name: "AMOUNT", uid: "totalAmount" },
+  { name: "PAYMENT STATUS", uid: "isCompleted" },
+  { name: "BOOKING DATE", uid: "createdAt" },
+  {
+    name: "BOOKING ON",
+    uid: "date",
+  },
 ];
 
-const statusOptions = [
-  { name: "Active", uid: "active" },
-  { name: "Failed", uid: "failed" },
-  { name: "Complete", uid: "complete" },
+const bookingsType = [
+  { name: "Trips", uid: "trips" },
+  { name: "Flights", uid: "flights" },
+  { name: "Hotels", uid: "hotels" },
 ];
-
-interface JobType {
-  id: string;
-  url: string;
-  createdAt: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  jobType: any;
-  status: "active" | "failed" | "complete";
+interface BookingTypeWithName extends BookingType {
+  name: string;
 }
-
-export default function CurrentlyScrapingTable({ jobs }: { jobs: JobType[] }) {
+export default function Bookings() {
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set([])
@@ -64,30 +67,45 @@ export default function CurrentlyScrapingTable({ jobs }: { jobs: JobType[] }) {
   });
 
   const [page, setPage] = React.useState(1);
+  const [bookings, setBookings] = useState<BookingTypeWithName[]>([]);
+  type Bookings = BookingTypeWithName;
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const data = await apiClient.get(USER_API_ROUTES.GET_ALL_BOOKINGS);
+        console.log(data.data.bookings);
+        setBookings(data.data.bookings);
+      } catch (error) {
+        console.log({ error });
+      }
+    };
+
+    getData();
+  }, []);
 
   const hasSearchFilter = Boolean(filterValue);
 
   const headerColumns = columns;
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = jobs;
+    let filteredUsers = [...bookings];
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.url.toLowerCase().includes(filterValue.toLowerCase())
+        user.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
       statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
+      Array.from(statusFilter).length !== bookingsType.length
     ) {
       filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status)
+        Array.from(statusFilter).includes(user.bookingType)
       );
     }
 
     return filteredUsers;
-  }, [jobs, hasSearchFilter, statusFilter, filterValue]);
+  }, [bookings, filterValue, hasSearchFilter, statusFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -98,49 +116,50 @@ export default function CurrentlyScrapingTable({ jobs }: { jobs: JobType[] }) {
     return filteredItems.slice(start, end);
   }, [page, filteredItems, rowsPerPage]);
 
+  const sortedItems = React.useMemo(() => {
+    return [...items].sort((a: Bookings, b: Bookings) => {
+      const first = a[sortDescriptor.column as keyof Bookings] as number;
+      const second = b[sortDescriptor.column as keyof Bookings] as number;
+      const cmp = first < second ? -1 : first > second ? 1 : 0;
+
+      return sortDescriptor.direction === "descending" ? -cmp : cmp;
+    });
+  }, [sortDescriptor, items]);
+
   const renderCell = React.useCallback(
-    (user: JobType, columnKey: React.Key) => {
-      const cellValue = user[columnKey as keyof JobType];
+    (booking: Bookings, columnKey: React.Key) => {
+      const cellValue = booking[columnKey as keyof Bookings];
 
-      function formatDateAndTime(inputDate: string) {
-        const date = new Date(inputDate);
-
-        const options = {
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-          hour: "numeric",
-          minute: "numeric",
-          second: "numeric",
-          timeZoneName: "short",
-        } as Intl.DateTimeFormatOptions;
-
-        const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
-          date
-        );
-
-        return formattedDate;
-      }
       switch (columnKey) {
-        case "url":
-          return (
-            <Link href={cellValue} target="_blank">
-              {cellValue}
-            </Link>
-          );
-        case "jobType":
-          return cellValue.type;
+        case "date":
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          return cellValue.split("T")[0];
         case "createdAt":
-          return formatDateAndTime(cellValue);
-        case "status":
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          return cellValue.split("T")[0];
+
+        case "bookingType":
           return (
             <Chip
               className="capitalize"
-              color={statusColorMap[user.status]}
+              color={statusColorMap[booking.bookingType]}
               size="sm"
               variant="flat"
             >
               {cellValue}
+            </Chip>
+          );
+        case "isCompleted":
+          return (
+            <Chip
+              className="capitalize"
+              color={cellValue ? "success" : "danger"}
+              size="sm"
+              variant="flat"
+            >
+              {cellValue ? "Completed" : "Pending"}
             </Chip>
           );
 
@@ -205,7 +224,7 @@ export default function CurrentlyScrapingTable({ jobs }: { jobs: JobType[] }) {
                   endContent={<FaChevronDown className="text-small" />}
                   variant="flat"
                 >
-                  Status
+                  Bookings Type
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -216,9 +235,9 @@ export default function CurrentlyScrapingTable({ jobs }: { jobs: JobType[] }) {
                 selectionMode="multiple"
                 onSelectionChange={setStatusFilter}
               >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
+                {bookingsType.map((bookingType) => (
+                  <DropdownItem key={bookingType.uid} className="capitalize">
+                    {bookingType.name}
                   </DropdownItem>
                 ))}
               </DropdownMenu>
@@ -227,7 +246,7 @@ export default function CurrentlyScrapingTable({ jobs }: { jobs: JobType[] }) {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {jobs.length} jobs
+            Total {bookings.length} bookings
           </span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
@@ -247,7 +266,7 @@ export default function CurrentlyScrapingTable({ jobs }: { jobs: JobType[] }) {
     filterValue,
     onSearchChange,
     statusFilter,
-    jobs.length,
+    bookings.length,
     onRowsPerPageChange,
     onClear,
   ]);
@@ -299,41 +318,39 @@ export default function CurrentlyScrapingTable({ jobs }: { jobs: JobType[] }) {
   ]);
 
   return (
-    <Table
-      aria-label="Example table with custom cells, pagination and sorting"
-      isHeaderSticky
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[382px]",
-      }}
-      selectedKeys={selectedKeys}
-      selectionMode="multiple"
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={"No jobs found"} items={items}>
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <div className="p-12 min-h-[80vh]">
+      <Table
+        isHeaderSticky
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        classNames={{
+          wrapper: "max-h-[382px]",
+        }}
+        selectedKeys={selectedKeys}
+        selectionMode="multiple"
+        sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement="outside"
+        onSelectionChange={setSelectedKeys}
+        onSortChange={setSortDescriptor}
+      >
+        <TableHeader columns={headerColumns}>
+          {(column) => (
+            <TableColumn key={column.uid} align={"start"}>
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody emptyContent={"No bookings found"} items={sortedItems}>
+          {(item) => (
+            <TableRow key={item.id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

@@ -37,7 +37,6 @@ export const startFlightScraping = async (page: Page): Promise<Flight[]> => {
       const flightDuration = (
         flightElement.querySelector(".xdW8")?.children[0]?.innerText || ""
       ).trim();
-      console.log({ flightDuration });
 
       const airlineName = (
         flightElement.querySelector(".VY2U")?.children[1]?.innerText || ""

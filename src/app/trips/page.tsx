@@ -19,7 +19,6 @@ const Trips = () => {
         `${USER_API_ROUTES.GET_CITY_TRIPS}?city=${searchCity}`
       );
       setTrips(response.data.trips);
-      console.log({ response });
     };
     if (searchCity) getData();
   }, [searchCity]);

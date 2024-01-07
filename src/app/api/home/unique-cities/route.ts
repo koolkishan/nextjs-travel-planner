@@ -16,7 +16,6 @@ export async function GET() {
     // Process the JSON data to get unique cities and corresponding images
     const cities = {};
     trips.forEach((trip) => {
-      console.log({ trip });
       const itinerary = trip.destinationItinerary;
       const details = trip.destinationDetails;
 

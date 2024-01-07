@@ -30,11 +30,8 @@ export default function Hotels() {
   const [hotels, setHotels] = useState<HotelType[]>([]);
   useEffect(() => {
     const fetchData = async () => {
-      // console.log("in fetch data");
       const response = await apiClient.get(USER_API_ROUTES.GET_ALL_HOTELS);
-      // console.log({ response });
       if (response.data.hotels) setHotels(response.data.hotels);
-      // console.log({ trips: response.data.trips });
     };
     fetchData();
   }, []);
@@ -89,10 +86,10 @@ export default function Hotels() {
   const renderCell = React.useCallback(
     (user: HotelType, columnKey: React.Key) => {
       const cellValue = user[columnKey as keyof HotelType];
-      // console.log({ user, columnKey });
+
       function formatDateAndTime(inputDate: string) {
         const date = new Date(inputDate);
-        // console.log({ inputDate });
+
         const options = {
           weekday: "long",
           month: "long",
@@ -244,7 +241,7 @@ export default function Hotels() {
 
   return (
     <div className="m-5">
-      {hotels.length && (
+      {hotels.length > 0 && (
         <Table
           aria-label="Example table with custom cells, pagination and sorting"
           isHeaderSticky

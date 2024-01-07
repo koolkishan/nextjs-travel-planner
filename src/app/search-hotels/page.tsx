@@ -39,13 +39,13 @@ const SearchHotels = () => {
           const response = await apiClient.get(
             `${USER_API_ROUTES.HOTELS_SCRAPE_STATUS}?jobId=${loadingJobId}`
           );
-          console.log({ response });
+
           if (response.data.status) {
             setScrappedHotels(response.data.hotels);
             clearInterval(jobIntervalRef.current);
             setScraping(false);
             setScrapingType(undefined);
-            console.log({ response });
+
             router.push(`/hotels?date=${hotelDate}`);
           }
         } catch (err) {

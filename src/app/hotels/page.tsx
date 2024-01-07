@@ -26,7 +26,7 @@ const Hotels = () => {
       taxes: 30,
       date: isoDate,
     });
-    console.log({ response });
+
     if (response.data.client_secret) {
       router.push(`/checkout?client_secret=${response.data.client_secret}`);
     }

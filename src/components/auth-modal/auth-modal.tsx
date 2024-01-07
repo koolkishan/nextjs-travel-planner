@@ -47,7 +47,6 @@ const AuthModal = ({
       password: password,
     });
     if (response.data.userInfo) {
-      console.log({ response });
       setUserInfo(response.data.userInfo);
       onClose();
     }
@@ -59,7 +58,6 @@ const AuthModal = ({
       password,
     });
     if (response.data.userInfo) {
-      console.log({ response });
       setUserInfo(response.data.userInfo);
       onClose();
     }

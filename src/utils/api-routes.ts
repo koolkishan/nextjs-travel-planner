@@ -14,4 +14,10 @@ export const USER_API_ROUTES = {
   GET_CITY_TRIPS: "/city-trips",
   CREATE_BOOKING: "/booking",
   GET_USER_BOOKINGS: "/booking/get-bookings",
+  GET_ALL_BOOKINGS: "/booking",
+};
+
+export const ADMIN_API_ROUTES = {
+  DASHBOARD_SCRAPING_CHART_DATA: "/admin/dashboard/scraping-chart-data",
+  DASHBOARD_METRICS: "/admin/dashboard/metrics",
 };

@@ -49,7 +49,7 @@ const SearchFlights = () => {
           const response = await apiClient.get(
             `${USER_API_ROUTES.FLIGHT_SCRAPE_STATUS}?jobId=${loadingJobId}`
           );
-          console.log({ response });
+
           if (response.data.status) {
             setScrappedFlights(response.data.flights);
             // setFlightsDate()

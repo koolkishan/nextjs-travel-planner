@@ -9,12 +9,10 @@ export async function GET(request: Request) {
     const source = searchParams.get("source");
     const destination = searchParams.get("destination");
     const date = searchParams.get("date");
-    console.log({ source, destination, date });
     const url = `https://www.kayak.com/flights/${source}-${destination}/${date}/`;
     const response = await prisma.jobs.create({
       data: { url, jobType: { type: "flight", source, destination, date } },
     });
-    // console.log({ response });
     await importQueue.add("new location", {
       url,
       jobType: { type: "flight", source, destination, date },
