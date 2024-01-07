@@ -1,7 +1,7 @@
 "use client";
 import { apiClient } from "@/lib";
 import { TripType } from "@/types/trip";
-import { USER_API_ROUTES } from "@/utils";
+import { USER_API_ROUTES, removeHtmlTags } from "@/utils";
 import { Button, Chip } from "@nextui-org/react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -72,10 +72,11 @@ const Trips = () => {
                   ))}
                 </ul>
               </div>
-              {/* Location */}
 
               <div>
-                <p className="line-clamp-1">{trip.description}</p>
+                <p className="line-clamp-1">
+                  {removeHtmlTags(trip.description)}
+                </p>
               </div>
               <div className="flex gap-4">
                 <div>{trip.days} days</div>

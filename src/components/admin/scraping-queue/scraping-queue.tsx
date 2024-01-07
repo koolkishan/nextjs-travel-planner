@@ -32,7 +32,7 @@ const ScrapingQueue = () => {
   };
 
   return (
-    <Card className="h-[400px]">
+    <Card className="h-full">
       <CardHeader>Current Queue</CardHeader>
       <CardBody className="flex items-center justify-center">
         <div

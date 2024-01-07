@@ -99,9 +99,9 @@ const ScrapingChart = () => {
     return {
       labels: dates,
       datasets: [
-        { label: "Hotels", data: hotels, backgroundColor: "red" },
-        { label: "Flights", data: flights, backgroundColor: "blue" },
-        { label: "Trips", data: trips, backgroundColor: "green" },
+        { label: "Hotels", data: hotels, backgroundColor: "#3c288e" },
+        { label: "Flights", data: flights, backgroundColor: "#d52b7a" },
+        { label: "Trips", data: trips, backgroundColor: "#520cf4" },
       ],
     };
   };
