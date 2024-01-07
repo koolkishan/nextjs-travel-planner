@@ -5,7 +5,6 @@ import {
   Tab,
   Card,
   CardBody,
-  CardHeader,
   CardFooter,
   Input,
   Button,
@@ -34,7 +33,7 @@ const ScrapeTrips = () => {
   };
 
   const startScraping = async () => {
-    const response = await fetch("http://localhost:3000/api/admin/createJob", {
+    await fetch("http://localhost:3000/api/admin/createJob", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

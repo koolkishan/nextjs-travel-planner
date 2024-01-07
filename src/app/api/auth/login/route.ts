@@ -8,7 +8,7 @@ import { cookies } from "next/headers";
 const secret = new TextEncoder().encode(process.env.JWT_KEY as string);
 const alg = "HS256";
 const createToken = async (email: string, userId: number) => {
-  return await new SignJWT({ email, userId })
+  return await new SignJWT({ email, userId, isAdmin: false })
     .setProtectedHeader({ alg })
     .setExpirationTime("48h")
     .sign(secret);
@@ -34,17 +34,17 @@ export async function POST(request: Request) {
         { status: 404 }
       );
     } else {
-      cookies().set("access_token", await createToken(user.email, user.id));
+      const token = await createToken(user.email, user.id);
+      cookies().set("access_token", token);
 
       return NextResponse.json(
         {
-          access_token: createToken(user.email, user.id),
+          access_token: token,
           userInfo: {
             id: user.id,
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
-            // profilePicture: user.profilePicture,
           },
         },
         { status: 200 }

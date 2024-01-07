@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import prisma from "../../../../../lib/prisma";
-import { formatISO, startOfDay, endOfDay } from "date-fns";
+import { startOfDay, endOfDay } from "date-fns";
 
 export async function GET() {
   try {
     // Get data for the last 7 days or as per your requirement
     const startDate = startOfDay(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       new Date(new Date() - 30 * 24 * 60 * 60 * 1000)
     );
     const endDate = endOfDay(new Date());

@@ -1,7 +1,3 @@
-import { apiClient } from "@/lib";
-
-import { ADMIN_API_ROUTES } from "@/utils/api-routes";
-import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
@@ -14,6 +10,25 @@ import {
   Legend,
 } from "chart.js";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
+import dynamic from "next/dynamic";
+import { apiClient } from "@/lib";
+import { ADMIN_API_ROUTES } from "@/utils/api-routes";
+
+// Define your data types
+interface ScrapingData {
+  hotels: Array<{ scrappedOn: string; _count: number }>;
+  flights: Array<{ scrappedOn: string; _count: number }>;
+  trips: Array<{ scrapedOn: string; _count: number }>;
+}
+
+interface ChartData {
+  labels: string[];
+  datasets: Array<{
+    label: string;
+    data: number[];
+    backgroundColor: string;
+  }>;
+}
 
 // Register the components
 ChartJS.register(
@@ -24,8 +39,9 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+
 const ScrapingChart = () => {
-  const [chartData, setChartData] = useState({
+  const [chartData, setChartData] = useState<ChartData>({
     labels: [],
     datasets: [
       {
@@ -45,8 +61,11 @@ const ScrapingChart = () => {
       },
     ],
   });
-  const processData = (data) => {
-    const aggregation = {};
+
+  const processData = (data: ScrapingData): ChartData => {
+    const aggregation: {
+      [key: string]: { hotels: number; flights: number; trips: number };
+    } = {};
 
     data.hotels.forEach((item) => {
       const date = item.scrappedOn.split("T")[0];
@@ -77,7 +96,14 @@ const ScrapingChart = () => {
     const flights = dates.map((date) => aggregation[date].flights);
     const trips = dates.map((date) => aggregation[date].trips);
 
-    return { dates, hotels, flights, trips };
+    return {
+      labels: dates,
+      datasets: [
+        { label: "Hotels", data: hotels, backgroundColor: "red" },
+        { label: "Flights", data: flights, backgroundColor: "blue" },
+        { label: "Trips", data: trips, backgroundColor: "green" },
+      ],
+    };
   };
 
   useEffect(() => {
@@ -86,15 +112,8 @@ const ScrapingChart = () => {
         ADMIN_API_ROUTES.DASHBOARD_SCRAPING_CHART_DATA
       );
       console.log({ response });
-      const { dates, hotels, flights, trips } = processData(response.data);
-      setChartData({
-        labels: dates,
-        datasets: [
-          { ...chartData.datasets[0], data: hotels },
-          { ...chartData.datasets[1], data: flights },
-          { ...chartData.datasets[2], data: trips },
-        ],
-      });
+      const newData = processData(response.data);
+      setChartData(newData);
     };
     getData();
   }, []);
@@ -103,7 +122,6 @@ const ScrapingChart = () => {
     <Card className="h-[400px]">
       <CardHeader>Scraping Logs</CardHeader>
       <CardBody className="flex items-center justify-center">
-        {" "}
         <Bar data={chartData} height={400} width={1000} />
       </CardBody>
     </Card>

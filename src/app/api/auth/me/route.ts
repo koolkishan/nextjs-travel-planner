@@ -11,23 +11,27 @@ export async function GET(request: NextRequest) {
       if (!jwtVerify(token?.value, secret)) {
         return NextResponse.redirect(new URL("/login", request.url));
       }
-      const { userId } = decodeJwt(token.value);
-
-      const user = await prisma.user.findUnique({
-        where: { id: parseInt(userId as string) },
-      });
-      if (user) {
-        return NextResponse.json(
-          {
-            userInfo: {
-              id: user.id,
-              lastName: user.lastName,
-              firstName: user.firstName,
-              email: user.email,
+      const { userId, isAdmin } = decodeJwt(token.value);
+      console.log({ userId, isAdmin });
+      if (!isAdmin) {
+        const user = await prisma.user.findUnique({
+          where: { id: parseInt(userId as string) },
+        });
+        if (user) {
+          return NextResponse.json(
+            {
+              userInfo: {
+                id: user.id,
+                lastName: user.lastName,
+                firstName: user.firstName,
+                email: user.email,
+              },
             },
-          },
-          { status: 200 }
-        );
+            { status: 200 }
+          );
+        }
+      } else {
+        return NextResponse.json({});
       }
     } else {
       return NextResponse.json({});
