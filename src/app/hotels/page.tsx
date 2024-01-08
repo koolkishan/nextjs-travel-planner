@@ -79,9 +79,9 @@ const Hotels = () => {
                         variant="ghost"
                         color="danger"
                         className="mt-2"
-                        onClick={() => bookHotel(hotel.id)}
+                        onClick={() => userInfo && bookHotel(hotel.id)}
                       >
-                        Book Now
+                        {!userInfo ? "Login to Book Now" : "Book Now"}
                       </Button>
                     </div>
                   </div>
