@@ -17,7 +17,8 @@ export const register = async () => {
     new Worker(
       "importQueue",
       async (job) => {
-        console.log("Connecting to Scraping Browser...");
+        console.log(process.env);
+        console.log("Connecting to Scraping Browser...", SBR_WS_ENDPOINT);
         const browser = await puppeteer.connect({
           browserWSEndpoint: SBR_WS_ENDPOINT,
         });
