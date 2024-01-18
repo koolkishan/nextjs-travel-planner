@@ -3,9 +3,6 @@ const nextConfig = {
   experimental: {
     instrumentationHook: true,
   },
-  env: {
-    NEXT_PUBLIC_API_HOST: "http://localhost:3000/api",
-  },
   images: {
     remotePatterns: [
       {
