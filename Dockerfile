@@ -16,10 +16,10 @@ COPY prisma/schema.prisma ./prisma/
 # Generate the prisma client based on the schema
 RUN npx prisma generate
 
-RUN npx prisma db push
-
 # Copy the rest of your app's source code
 COPY . .
+
+RUN npx prisma db push
 
 # Build the production version of the app
 RUN npm run build
