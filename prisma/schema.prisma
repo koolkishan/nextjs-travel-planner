@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("postgresql://aptible:MFa4T9UcRnndRbRrK3Tf_Psly_ItyrpD@db-shared-us-east-1-wat-122848.aptible.in:26845/db")
 }
 
 
