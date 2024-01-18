@@ -4,8 +4,7 @@ import { startPackageScraping } from "./scraping/packageScraping";
 import { startFlightScraping } from "./scraping/flightsScraping";
 import { startHotelScraping } from "./scraping/hotelScraping";
 
-const SBR_WS_ENDPOINT =
-  "wss://brd-customer-hl_6d21b639-zone-scraping_browser13:u3741jzg0ye9@brd.superproxy.io:9222";
+const SBR_WS_ENDPOINT = process.env.SBR_WS_ENDPOINT;
 
 export const register = async () => {
   //This if statement is important, read here: https://nextjs.org/docs/app/building-your-application/optimizing/instrumentation
@@ -19,15 +18,15 @@ export const register = async () => {
       "importQueue",
       async (job) => {
         console.log("Connecting to Scraping Browser...");
-        // const browser = await puppeteer.connect({
-        //   browserWSEndpoint: SBR_WS_ENDPOINT,
-        // });
-        console.log(job.data);
-        const browser = await puppeteer.launch({
-          executablePath:
-            "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-          headless: false,
+        const browser = await puppeteer.connect({
+          browserWSEndpoint: SBR_WS_ENDPOINT,
         });
+        console.log(job.data);
+        // const browser = await puppeteer.launch({
+        //   executablePath:
+        //     "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        //   headless: false,
+        // });
         try {
           const page = await browser.newPage();
           if (job.data.jobType.type === "location") {

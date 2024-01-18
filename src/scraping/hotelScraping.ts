@@ -35,6 +35,13 @@ export const startHotelScraping = async (
   await newPage.bringToFront();
   await new Promise((resolve) => setTimeout(resolve, 1000));
   console.log("Timeout Complete. [Bring to Front]");
+
+  // const client = await page.createCDPSession();
+  // console.log('Waiting captcha to solve...');
+  // const { status } = await client.send('Captcha.waitForSolve', {
+  //     detectTimeout: 10000,
+  // });
+  // console.log('Captcha solve status:', status);
   //   await newPage.bringToFront();
   console.log("Starting Page Evalution");
   await new Promise((resolve) => setTimeout(resolve, 15000));

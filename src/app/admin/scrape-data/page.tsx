@@ -12,8 +12,9 @@ import {
   ListboxItem,
 } from "@nextui-org/react";
 import { CurrentlyScrapingTable } from "./components/currently-scraping-table";
-import axios from "axios";
 import ScrapingQueue from "@/components/admin/scraping-queue/scraping-queue";
+import { apiClient } from "@/lib";
+import { ADMIN_API_ROUTES } from "@/utils/api-routes";
 
 const ScrapeTrips = () => {
   const [cities, setCities] = useState([]);
@@ -33,25 +34,17 @@ const ScrapeTrips = () => {
   };
 
   const startScraping = async () => {
-    await fetch("http://localhost:3000/api/admin/createJob", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        url:
-          "https://packages.yatra.com/holidays/intl/search.htm?destination=" +
-          selectedCity,
-        jobType: { type: "location" },
-      }),
+    await apiClient.post(ADMIN_API_ROUTES.CREATE_JOB, {
+      url:
+        "https://packages.yatra.com/holidays/intl/search.htm?destination=" +
+        selectedCity,
+      jobType: { type: "location" },
     });
   };
 
   useEffect(() => {
     const getData = async () => {
-      const data = await axios.get(
-        "http://localhost:3000/api/admin/jobDetails"
-      );
+      const data = await apiClient.get(ADMIN_API_ROUTES.JOB_DETAILS);
       setJobs(data.data.jobs);
     };
     const interval = setInterval(() => getData(), 3000);
@@ -90,7 +83,7 @@ const ScrapeTrips = () => {
                 </Listbox>
               </div>
             </Tab>
-            <Tab key="url" title="URL">
+            <Tab key="url" title="Flights">
               <Card>
                 <CardBody>
                   <Input
@@ -101,7 +94,7 @@ const ScrapeTrips = () => {
                 </CardBody>
               </Card>
             </Tab>
-            <Tab key="id" title="ID">
+            <Tab key="id" title="Hotels">
               <Card>
                 <CardBody>
                   <Input

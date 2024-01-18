@@ -4,9 +4,7 @@ import prisma from "../../../lib/prisma";
 
 import Stripe from "stripe";
 
-const stripe = new Stripe(
-  "sk_test_51DpVXWGc9EcLzRLBNKni929hB026lACv6toMfjH1FPtIXfYgIrhXzjolcYzDDl2VwtvmyPF20PJ1JaMUCTNoEwDN00FN8hrRZL"
-);
+const stripe = new Stripe(process.env.STRIPE_KEY || "");
 
 export async function GET() {
   try {

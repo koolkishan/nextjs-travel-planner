@@ -5,7 +5,9 @@ import { loadStripe } from "@stripe/stripe-js";
 import StripeForm from "./components/stripe-form";
 import { useSearchParams } from "next/navigation";
 
-const stripePromise = loadStripe("pk_test_xeqIPdYS2PpKbHmKG4gJqpde");
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || ""
+);
 
 const Page = () => {
   const [clientSecret, setClientSecret] = useState("");
