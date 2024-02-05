@@ -22,7 +22,7 @@ const Search = () => {
 
   const searchCities = async (searchQuery: string) => {
     const response = await fetch(
-      `http://api.geonames.org/searchJSON?q=${searchQuery}&maxRows=5&username=kishan&style=SHORT`
+      `https://secure.geonames.org/searchJSON?q=${searchQuery}&maxRows=5&username=kishan&style=SHORT`
     );
     const parsed = await response.json();
     setCities(
