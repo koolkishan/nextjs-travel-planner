@@ -9,6 +9,19 @@ const SBR_WS_ENDPOINT = process.env.SBR_WS_ENDPOINT;
 export const register = async () => {
   //This if statement is important, read here: https://nextjs.org/docs/app/building-your-application/optimizing/instrumentation
   if (process.env.NEXT_RUNTIME === "nodejs") {
+    // Check for admins
+
+    const admin = await prisma.admin.count();
+    if (!admin) {
+      prisma.admin.create({
+        data: {
+          email: "admin@arklyte.com",
+          password:
+            "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+        },
+      });
+    }
+
     const { Worker } = await import("bullmq");
     const puppeteer = await import("puppeteer");
     const { connection } = await import("./lib/redis");
