@@ -12,14 +12,17 @@ export const register = async () => {
     // Check for admins
 
     const admin = await prisma.admin.count();
+    console.log({ admin });
     if (!admin) {
-      prisma.admin.create({
+      console.log("in if");
+      const data = await prisma.admin.create({
         data: {
           email: "admin@arklyte.com",
           password:
             "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
         },
       });
+      console.log({ data });
     }
 
     const { Worker } = await import("bullmq");

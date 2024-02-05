@@ -4,9 +4,11 @@ import prisma from "../../../../lib/prisma";
 import { decodeJwt, jwtVerify } from "jose";
 
 export async function GET(request: NextRequest) {
+  console.log("in me");
   const secret = new TextEncoder().encode(process.env.JWT_KEY as string);
   try {
     const token = request.cookies.get("access_token");
+    console.log("in token", token);
     if (token) {
       if (!jwtVerify(token?.value, secret)) {
         return NextResponse.redirect(new URL("/login", request.url));
