@@ -44,7 +44,7 @@ export const startHotelScraping = async (
   // console.log('Captcha solve status:', status);
   //   await newPage.bringToFront();
   console.log("Starting Page Evalution");
-  await new Promise((resolve) => setTimeout(resolve, 15000));
+  await new Promise((resolve) => setTimeout(resolve, 30000));
 
   return await newPage.evaluate(() => {
     // Your scraping logic goes here
