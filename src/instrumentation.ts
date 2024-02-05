@@ -77,7 +77,7 @@ export const register = async () => {
             });
             if (!alreadyScrapped) {
               console.log("Connected! Navigating to " + job.data.url);
-              await page.goto(job.data.url);
+              await page.goto(job.data.url, { timeout: 120000 });
               console.log("Navigated! Scraping page content...");
               const pkg = await startPackageScraping(
                 page,
