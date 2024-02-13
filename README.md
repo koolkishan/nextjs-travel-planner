@@ -6,7 +6,7 @@
 
 <h2>Project Screenshots:</h2>
 
-<img src="https://github.com/koolkishan/nextjs-travel-planner/blob/main/screenshots/ARKLYTE%20(3).png" alt="project-screenshot" width="100" height="100/">
+<img src="https://github.com/koolkishan/nextjs-travel-planner/blob/main/screenshots/ARKLYTE%20(3).png" alt="project-screenshot" >
 
   
   
